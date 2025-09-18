@@ -4,6 +4,6 @@
 
 | Name | Student ID | 
 | --- | --- |
-| Youssef Yassa | 40265083 |
+| Youssef Yassa (Team Leader) | 40265083 |
 | Tristan Girardi | 40272203 |
 | Youssef Youssef | 40285384 | 
