@@ -1,5 +1,6 @@
 package com.example.__iteration_1.classes;
 import com.example.__iteration_1.enums.DaysOfOperation;
+import com.project342._342proj.TimeTable;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,9 +35,17 @@ public class Console {
             String routeId = values[0];
             City departureCity = new City(values[1]);
             City arrivalCity = new City(values[2]);
-            //LocalTime departure = LocalTime.parse(values[3], DateTimeFormatter.ofPattern("HH:mm"));
-            // LocalTime arrival = LocalTime.parse(values[4], DateTimeFormatter.ofPattern("HH:mm"));
-            //Timetable timetable = new Timetable(departure, arrival);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+            LocalTime departingTime = LocalTime.parse(values[3], formatter);
+
+            String arrivalTimeSt = values[4];
+            if(arrivalTimeSt.endsWith(" (+1d)")){
+                arrivalTimeSt = arrivalTimeSt.replace(" (+1d)", "");
+            }
+
+            LocalTime arrivalTime = LocalTime.parse(arrivalTimeSt, formatter);
+
+            TimeTable timeTable = new TimeTable(departingTime, arrivalTime);
             Train train = new Train(values[5]);
 
             String days = null;
