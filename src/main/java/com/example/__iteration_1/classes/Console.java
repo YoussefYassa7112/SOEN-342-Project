@@ -27,6 +27,10 @@ public class Console {
         catalog.readFile(csv);
     }
 
+    public void transitive(){catalog.transitive();}
+
+    public void twoStop(){catalog.transitiveTwoStops();}
+
     public void showResults(){
         catalog.showResults();
     }

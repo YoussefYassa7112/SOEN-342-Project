@@ -13,6 +13,8 @@ public class Application {
 
 		Console c = new Console();
 		c.readFile();
+        c.transitive();
+        c.twoStop();
 		c.showResults();
 		System.out.println("Hello World");
 	}

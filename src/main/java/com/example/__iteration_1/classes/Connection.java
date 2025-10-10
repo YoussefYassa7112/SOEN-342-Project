@@ -2,7 +2,10 @@ package com.example.__iteration_1.classes;
 
 import com.example.__iteration_1.enums.DaysOfOperation;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Connection {
 
@@ -15,6 +18,10 @@ public class Connection {
     FirstClassTicket firstClassTicket;
     SecondClassTicket secondClassTicket;
 
+    public Set<DaysOfOperation> getDaysOfOperation() {
+        return new HashSet<>(daysOfOperation);
+    }
+
     public Connection(String routeId, City departureCity, City arrivalCity, Timetable timetable, Train train, List<DaysOfOperation> daysOfOperation, FirstClassTicket firstClassTicket, SecondClassTicket secondClassTicket) {
         this.routeId = routeId;
         this.departureCity = departureCity;
@@ -25,6 +32,48 @@ public class Connection {
         this.firstClassTicket = firstClassTicket;
         this.secondClassTicket = secondClassTicket;
     }
+
+    public Connection(Connection c1, Connection c2) {
+        // departure of the first
+        this.departureCity = c1.getDepartureCity();
+        // arrival of the second
+        this.arrivalCity = c2.getArrivalCity();
+
+        // timetable: start from c1’s departure and end at c2’s arrival
+        this.timetable = new Timetable(
+                c1.getTimetable().getDepartureTime().toString(),
+                c2.getTimetable().getArrivalTime().toString()
+        );
+
+        // if both trains are different, store a combined label
+        this.train = new Train(c1.getTrain().getTrainType() + " + " + c2.getTrain().getTrainType());
+
+        // combine operating days
+        Set<DaysOfOperation> common = new HashSet<>();
+        if (c1.getDaysOfOperation() != null) common.addAll(c1.getDaysOfOperation());
+        if (c2.getDaysOfOperation() != null) common.retainAll(c2.getDaysOfOperation());
+
+// fallback: if intersection is empty, use c1's days or empty list
+        if (common.isEmpty() && c1.getDaysOfOperation() != null) {
+            common.addAll(c1.getDaysOfOperation());
+        }
+
+        this.daysOfOperation = new ArrayList<>(common);
+
+
+        // combine ticket prices
+        this.firstClassTicket = new FirstClassTicket(
+                c1.getFirstClassTicket().getPrice() + c2.getFirstClassTicket().getPrice()
+        );
+        this.secondClassTicket = new SecondClassTicket(
+                c1.getSecondClassTicket().getPrice() + c2.getSecondClassTicket().getPrice()
+        );
+
+        // optionally create a new route ID for clarity
+        this.routeId = c1.getRouteId() + "-" + c2.getRouteId();
+    }
+
+
 
     public String getRouteId() {
         return routeId;

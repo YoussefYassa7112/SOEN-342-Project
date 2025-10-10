@@ -84,6 +84,74 @@ public class ConnectionCatalog {
         }
     }
 
+//    public void showResults(){
+//        resultsList.forEach(connection -> {System.out.println(connection);});
+//    }
+
+
+    public void transitive() {
+        List<Connection> newConnections = new ArrayList<>();
+
+        for (Connection c1 : resultsList) {
+            for (Connection c2 : resultsList) {
+                if ((c1 != c2 && c1.getArrivalCity().equals(c2.getDepartureCity())) && c2.timetable.departureTime.isAfter(c1.timetable.arrivalTime)) {
+                    newConnections.add(new Connection(c1, c2));
+                }
+            }
+        }
+
+        resultsList.addAll(newConnections);
+
+        System.out.println("Added " + newConnections.size() + " transitive connections.");
+    }
+
+
+    private boolean isValidTime(Connection first, Connection second) {
+        long arrival = first.getTimetable().getArrivalTime().toSecondOfDay();
+        long departure = second.getTimetable().getDepartureTime().toSecondOfDay();
+
+        if (departure < arrival) departure += 24 * 3600; // overnight
+        return departure >= arrival;
+    }
+
+
+    public void transitiveTwoStops() {
+        List<Connection> twoStopConnections = new ArrayList<>();
+
+        for (Connection c1 : resultsList) {
+            for (Connection c2 : resultsList) {
+                // 1-stop check: c1 → c2
+                if (c1 != c2 &&
+                        c1.getArrivalCity().equals(c2.getDepartureCity()) &&
+                        isValidTime(c1, c2) &&
+                        !c1.getDaysOfOperation().isEmpty() &&
+                        !c2.getDaysOfOperation().isEmpty()) {
+
+                    Connection oneStop = new Connection(c1, c2);
+
+                    for (Connection c3 : resultsList) {
+                        // 2-stop check: c2 → c3
+                        if (c3 != c1 && c3 != c2 &&
+                                c2.getArrivalCity().equals(c3.getDepartureCity()) &&
+                                isValidTime(c2, c3) &&
+                                !c3.getDaysOfOperation().isEmpty() && c3.timetable.departureTime.isAfter(oneStop.timetable.arrivalTime)){
+
+                            // Create a 2-stop connection: c1 → c2 → c3
+                            twoStopConnections.add(new Connection(oneStop, c3));
+                        }
+                    }
+                }
+            }
+        }
+
+        resultsList.addAll(twoStopConnections);
+        System.out.println("Added " + twoStopConnections.size() + " 2-stop connections.");
+    }
+
+
+
+
+
     public void showResults(){
         resultsList.forEach(connection -> {System.out.println(connection);});
     }

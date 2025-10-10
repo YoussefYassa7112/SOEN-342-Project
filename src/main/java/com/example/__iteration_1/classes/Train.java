@@ -8,6 +8,11 @@ public class Train {
         this.trainType = trainType;
     }
 
+    public Train(Train t1, Train t2) {
+        this.trainType = t1.getTrainType() + " + " + t2.getTrainType();
+    }
+
+
     public String getTrainType() {
         return trainType;
     }
