@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 public class ConnectionCatalog {
 
-    List<Connection> connections;
+    private List<Connection> connections;
     private static final String[] DAY_ORDER = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
     private List<Connection> resultsList = new ArrayList();
 

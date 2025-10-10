@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Connection {
 
-    String routeId;
+    private String routeId;
     City departureCity;
     City arrivalCity;
     Timetable timetable;
@@ -66,7 +66,7 @@ public class Connection {
         this.train = train;
     }
 
-//    public DaysOfOperation getDaysOfOperation() {
+//   public DaysOfOperation getDaysOfOperation() {
 //        return daysOfOperation;
 //    }
 //
@@ -92,15 +92,16 @@ public class Connection {
 
     @Override
     public String toString() {
-        return "Connection{" +
-                "routeId='" + routeId + '\'' +
-                ", departureCity=" + departureCity +
-                ", arrivalCity=" + arrivalCity +
-                ", timetable=" + timetable +
-                ", train=" + train +
-                ", daysOfOperation=" + daysOfOperation +
-                ", firstClassTicket=" + firstClassTicket +
-                ", secondClassTicket=" + secondClassTicket +
-                '}';
+        return String.format(
+                "| %-30s | %-30s | %-30s | %-30s | %-40s | %-40s | %-40s |",
+                departureCity,
+                arrivalCity,
+                timetable,
+                train,
+                daysOfOperation,
+                firstClassTicket,
+                secondClassTicket
+        );
     }
+
 }
