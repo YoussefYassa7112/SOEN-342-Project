@@ -5,19 +5,17 @@ import com.example.__iteration_1.enums.DaysOfOperation;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ConnectionCatalog {
 
     private List<Connection> connections;
     private static final String[] DAY_ORDER = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
-    private List<Connection> resultsList = new ArrayList();
+    private List<Connection> resultsList;
 
     public ConnectionCatalog() {
         connections = new ArrayList<>();
+        resultsList = new ArrayList<>();
     }
 
     public void readFile(String csv) {
@@ -81,66 +79,123 @@ public class ConnectionCatalog {
             SecondClassTicket secondClassTicket = new SecondClassTicket(Double.parseDouble(values[values.length - 1]));
 
             Connection connection = new Connection(routeId, departureCity, arrivalCity, timetable, train, result, firstClassTicket, secondClassTicket);
+            connections.add(connection);
             resultsList.add(connection);
         }
+        scanner.close();
     }
 
     public List<Connection> showResults(){
+        for (Connection connection : resultsList) {
+            System.out.println(connection);
+        }
         return resultsList;
-    }
+   }
 
     public List<Connection> getAllConnections(){
-        return resultsList;
-    }
+        for (Connection connection : connections) {
+            System.out.println(connection);
+        }
+        return connections;
+   }
 
 
     public List<Connection> getConnectionsByDepartureCity(String value) {
-        connections.clear();
-        for (Connection connection : resultsList) {
+        resultsList.clear();
+        for (Connection connection : connections) {
             if (connection.getDepartureCity().getName().equalsIgnoreCase(value)) {
-                connections.add(connection);
+                resultsList.add(connection);
             }
         }
-        return connections;
+        return resultsList;
     }
 
     public List<Connection> getConnectionsByArrivalCity(String value) {
-        connections.clear();
-        for (Connection connection : resultsList) {
+        resultsList.clear();
+        for (Connection connection : connections) {
             if (connection.getArrivalCity().getName().equalsIgnoreCase(value)) {
-                connections.add(connection);
+                resultsList.add(connection);
             }
         }
-        return connections;
+        return resultsList;
     }
 
     public List<Connection> getConnectionsByDayOfOperation(DaysOfOperation dayOfOperation) {
-        connections.clear();
-        for (Connection connection : resultsList) {
+        resultsList.clear();
+        for (Connection connection : connections) {
             if (connection.getDaysOfOperation().contains(dayOfOperation)) {
-                connections.add(connection);
+                resultsList.add(connection);
             }
         }
-        return connections;
+        return resultsList;
     }
 
     public List<Connection> getConnectionsByDepartureTime(LocalTime time) {
-        connections.clear();
-        for (Connection connection : resultsList) {
+        resultsList.clear();
+        for (Connection connection : connections) {
             if (connection.getTimetable().getDepartureTime().equals(time)) {
-                connections.add(connection);
+                resultsList.add(connection);
             }
         }
-        return connections;
+        return resultsList;
     }
 
     public List<Connection> getConnectionsByArrivalTimeBefore(LocalTime time) {
-        connections.clear();
-        for (Connection connection : resultsList) {
+        resultsList.clear();
+        for (Connection connection : connections) {
             if (connection.getTimetable().getArrivalTime().equals(time)) {
-                connections.add(connection);
+                resultsList.add(connection);
             }
         }
-        return connections;
+        return resultsList;
+    }
+
+    public List<Connection> sortResultsByTripDuration() {
+        System.out.println("Would you like to sort by trip duration in ascending or descending order? (Enter 'asc' or 'desc'): ");
+        Scanner scanner = new Scanner(System.in);
+        String order = scanner.nextLine().trim().toLowerCase();
+        if (!order.equals("asc") && !order.equals("desc")) {
+            System.out.println("Invalid input. Default to ascending order.");
+            order = "asc";
+        }
+        Comparator<Connection> comparator = Comparator.comparingLong(
+                c -> c.getTimetable().getDuration()
+        );
+        if ("desc".equalsIgnoreCase(order)) {
+            comparator = comparator.reversed();
+        }
+        resultsList.sort(comparator);
+        return resultsList;
+    }
+    public List<Connection> sortResultsByPrice() {
+        while(true) {
+            System.out.print("Would you like to sort by First Class or Second Class ticket price? (Enter '1' or '2'): ");
+            Scanner scanner = new Scanner(System.in);
+            String choice = scanner.nextLine();
+            System.out.println("Would you like to sort in ascending or descending order? (Enter 'asc' or 'desc'): ");
+            String order = scanner.nextLine().trim().toLowerCase();
+            if (!order.equals("asc") && !order.equals("desc")) {
+                System.out.println("Invalid input. Default to ascending order.");
+                order = "asc";
+            }
+            Comparator<Connection> comparator;
+            if (choice.equals("1")) {
+                comparator = Comparator.comparingDouble(c -> c.getFirstClassTicket().getPrice());
+                if ("desc".equalsIgnoreCase(order)) {
+                    comparator = comparator.reversed();
+                }
+                resultsList.sort(comparator);
+                return resultsList;
+            } else if (choice.equals("2")) {
+                comparator = Comparator.comparingDouble(c -> c.getSecondClassTicket().getPrice());
+                if ("desc".equalsIgnoreCase(order)) {
+                    comparator = comparator.reversed();
+                }
+                resultsList.sort(comparator);
+                return resultsList;
+            } else {
+                System.out.println("Invalid choice.");
+            }
+        }
     }
 }
