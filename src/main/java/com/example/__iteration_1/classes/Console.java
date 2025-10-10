@@ -1,5 +1,6 @@
 package com.example.__iteration_1.classes;
 import com.example.__iteration_1.enums.DaysOfOperation;
+import com.project342._342proj.TimeTable;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
