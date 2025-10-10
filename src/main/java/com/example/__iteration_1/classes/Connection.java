@@ -2,7 +2,7 @@ package com.example.__iteration_1.classes;
 
 import com.example.__iteration_1.enums.DaysOfOperation;
 
-import java.sql.Time;
+import java.util.List;
 
 public class Connection {
 
@@ -11,11 +11,11 @@ public class Connection {
     City arrivalCity;
     Timetable timetable;
     Train train;
-    DaysOfOperation daysOfOperation;
+    List<DaysOfOperation> daysOfOperation;
     FirstClassTicket firstClassTicket;
     SecondClassTicket secondClassTicket;
 
-    public Connection(String routeId, City departureCity, City arrivalCity, Timetable timetable, Train train, DaysOfOperation daysOfOperation, FirstClassTicket firstClassTicket, SecondClassTicket secondClassTicket) {
+    public Connection(String routeId, City departureCity, City arrivalCity, Timetable timetable, Train train, List<DaysOfOperation> daysOfOperation, FirstClassTicket firstClassTicket, SecondClassTicket secondClassTicket) {
         this.routeId = routeId;
         this.departureCity = departureCity;
         this.arrivalCity = arrivalCity;
@@ -66,13 +66,13 @@ public class Connection {
         this.train = train;
     }
 
-    public DaysOfOperation getDaysOfOperation() {
-        return daysOfOperation;
-    }
-
-    public void setDaysOfOperation(DaysOfOperation daysOfOperation) {
-        this.daysOfOperation = daysOfOperation;
-    }
+//    public DaysOfOperation getDaysOfOperation() {
+//        return daysOfOperation;
+//    }
+//
+//    public void setDaysOfOperation(DaysOfOperation daysOfOperation) {
+//        this.daysOfOperation = daysOfOperation;
+//    }
 
     public FirstClassTicket getFirstClassTicket() {
         return firstClassTicket;
