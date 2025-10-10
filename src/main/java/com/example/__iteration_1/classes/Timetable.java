@@ -3,15 +3,36 @@ package com.example.__iteration_1.classes;
 import com.example.__iteration_1.enums.DaysOfOperation;
 
 import java.sql.Time;
+import java.time.Duration;
 import java.time.LocalTime;
 
 public class Timetable {
-    LocalTime departureTime;
-    LocalTime arrivalTime;
+    private LocalTime departureTime;
+    private LocalTime arrivalTime;
+    private Long duration;
 
-    public Timetable(LocalTime departureTime, LocalTime arrivalTime) {
-        this.departureTime = departureTime;
-        this.arrivalTime = arrivalTime;
+    public Timetable(String departureTime, String arrivalTime) {
+        this.departureTime = LocalTime.parse(departureTime.substring(0, 5));
+        this.arrivalTime = LocalTime.parse(arrivalTime.substring(0, 5));
+
+        long depMinutes = this.departureTime.getHour() * 60L + this.departureTime.getMinute();
+        long arrMinutes = this.arrivalTime.getHour() * 60L + this.arrivalTime.getMinute();
+        if(arrivalTime.contains("+1")) {
+            duration=24L*60L-depMinutes+arrMinutes;
+        }
+        else{
+            duration = arrMinutes - depMinutes;
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        return "Timetable{" +
+                "departureTime=" + departureTime +
+                ", arrivalTime=" + arrivalTime +
+                ", duration=" + duration +
+                '}';
     }
 
     public LocalTime getDepartureTime() {
@@ -28,4 +49,10 @@ public class Timetable {
     public void setArrivalTime(LocalTime arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
+
+    public Long getDuration() {
+        return duration;
+    }
+
+
 }

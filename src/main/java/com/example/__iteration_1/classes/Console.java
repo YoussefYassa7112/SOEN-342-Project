@@ -5,10 +5,7 @@ import com.project342._342proj.TimeTable;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -17,81 +14,129 @@ public class Console {
 
     private final String csv = "src/main/resources/eu_rail_network.csv";
     private static final String[] DAY_ORDER = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
+    private List<Connection> resultsList = new ArrayList();
+    private ConnectionCatalog catalog;
+
+
+    public Console() {
+        this.catalog = new ConnectionCatalog();
+    }
 
     public void readFile() {
-
-        Scanner scanner = null;
-
-        try {
-            scanner = new Scanner(new FileInputStream(csv));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        scanner.nextLine();
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            String[] values = line.split(",");
-
-            String routeId = values[0];
-            City departureCity = new City(values[1]);
-            City arrivalCity = new City(values[2]);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-            LocalTime departingTime = LocalTime.parse(values[3], formatter);
-
-            String arrivalTimeSt = values[4];
-            if(arrivalTimeSt.endsWith(" (+1d)")){
-                arrivalTimeSt = arrivalTimeSt.replace(" (+1d)", "");
-            }
-
-            LocalTime arrivalTime = LocalTime.parse(arrivalTimeSt, formatter);
-
-            TimeTable timeTable = new TimeTable(departingTime, arrivalTime);
-            Train train = new Train(values[5]);
-
-            String days = null;
-            int i = 6;
-            if(values[6].startsWith("\"")){
-                days = values[6];
-                do{
-                    i++;
-                    days += "," + values[i];
-                }while(!values[i].endsWith("\""));
-                days = days.substring(1, days.length()-1);
-            }
-            else{
-                days = values[6];
-            }
-            System.out.println(days);
-
-            List<DaysOfOperation> result = new ArrayList<>();
-            for (String part : days.split(",")) {
-                part = part.trim().toUpperCase();
-                if (part.equals("DAILY")) {
-                    for (String day : DAY_ORDER) {
-                        result.add(DaysOfOperation.valueOf(day));
-                    }
-                } else if (Arrays.asList(DAY_ORDER).contains(part)) {
-                    result.add(DaysOfOperation.valueOf(part));
-                } else if (part.contains("-")) {
-                    String[] range = part.split("-");
-                    String startDay = range[0].trim().toUpperCase();
-                    String endDay = range[1].trim().toUpperCase();
-                    int start = Arrays.asList(DAY_ORDER).indexOf(startDay);
-                    int end = Arrays.asList(DAY_ORDER).indexOf(endDay);
-                    if (start != -1 && end != -1 && start <= end) {
-                        for (int k = start; k <= end; k++) {
-                            result.add(DaysOfOperation.valueOf(DAY_ORDER[k]));
-                        }
-                    }
-                }
-            }
-            FirstClassTicket firstClassTicket = new FirstClassTicket(Double.parseDouble(values[values.length-2]));
-            SecondClassTicket secondClassTicket = new SecondClassTicket(Double.parseDouble(values[values.length-1]));
-
-
-        }
-        scanner.close();
+        catalog.readFile(csv);
     }
+
+    public void  showResults() {
+        catalog.showResults();
+    }
+
+//    public List<Connection> sortResultsByTripDuration() {
+//        System.out.println("Would you like to sort by trip duration in ascending or descending order? (Enter 'asc' or 'desc'): ");
+//        Scanner scanner = new Scanner(System.in);
+//        String order = scanner.nextLine().trim().toLowerCase();
+//        if (!order.equals("asc") && !order.equals("desc")) {
+//            System.out.println("Invalid input. Default to ascending order.");
+//            order = "asc";
+//        }
+//        Comparator<Connection> comparator = Comparator.comparingLong(
+//                c -> c.getTimetable().getDuration()
+//        );
+//        if ("desc".equalsIgnoreCase(order)) {
+//            comparator = comparator.reversed();
+//        }
+//        resultsList.sort(comparator);
+//        return resultsList;
+//    }
+//
+//    public List<Connection> sortResultsByPrice() {
+//        while(true) {
+//            System.out.print("Would you like to sort by First Class or Second Class ticket price? (Enter '1' or '2'): ");
+//            Scanner scanner = new Scanner(System.in);
+//            String choice = scanner.nextLine();
+//            System.out.println("Would you like to sort in ascending or descending order? (Enter 'asc' or 'desc'): ");
+//            String order = scanner.nextLine().trim().toLowerCase();
+//            if (!order.equals("asc") && !order.equals("desc")) {
+//                System.out.println("Invalid input. Default to ascending order.");
+//                order = "asc";
+//            }
+//            Comparator<Connection> comparator;
+//            if (choice.equals("1")) {
+//                comparator = Comparator.comparingDouble(c -> c.getFirstClassTicket().getPrice());
+//                if ("desc".equalsIgnoreCase(order)) {
+//                    comparator = comparator.reversed();
+//                }
+//                resultsList.sort(comparator);
+//                return resultsList;
+//            } else if (choice.equals("2")) {
+//                comparator = Comparator.comparingDouble(c -> c.getSecondClassTicket().getPrice());
+//                if ("desc".equalsIgnoreCase(order)) {
+//                    comparator = comparator.reversed();
+//                }
+//                resultsList.sort(comparator);
+//                return resultsList;
+//            } else {
+//                System.out.println("Invalid choice.");
+//            }
+//        }
+//    }
+
+    public List<Connection> sortResultsByTripDuration() {
+        return catalog.sortResultsByTripDuration();
+    }
+    public List<Connection> sortResultsByPrice() {
+        return catalog.sortResultsByPrice();
+    }
+
+
+    public void printResults() {
+        System.out.printf(
+                "| %-30s | %-30s | %-30s | %-40s | %-40s | %-40s | %-40s |\n",
+                "Departure", "Arrival", "Timetable", "Train", "Days", "1st Class", "2nd Class"
+        );
+        System.out.println("-------------------------------------------------------------------------------------------");
+        for (Connection connection : resultsList) {
+            System.out.println(connection);
+        }
+    }
+
+
+    public void searchConnection(){
+        resultsList = catalog.getAllConnections();
+    }
+
+    public void searchConnection(String parameter, String value){
+        switch(parameter){
+            case "departureCity":
+                resultsList.clear();
+                resultsList = catalog.getConnectionsByDepartureCity(value);
+                break;
+            case "arrivalCity":
+                resultsList = catalog.getConnectionsByArrivalCity(value);
+                break;
+            case "dayOfOperation":
+                resultsList = catalog.getConnectionsByDayOfOperation(DaysOfOperation.valueOf(value));
+                break;
+            case "departureTime":
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+                LocalTime time = LocalTime.parse(value, formatter);
+                resultsList = catalog.getConnectionsByDepartureTime(time);
+                break;
+            case "arrivalTime":
+                DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HH:mm");
+                LocalTime time2 = LocalTime.parse(value, formatter2);
+                resultsList = catalog.getConnectionsByArrivalTimeBefore(time2);
+                break;
+            default:
+                System.out.println("Invalid parameter");
+        }
+    }
+
+    public List<Connection> getResultsList() {
+        return resultsList;
+    }
+
+
+
 }
 
 

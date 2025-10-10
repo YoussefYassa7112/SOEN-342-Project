@@ -2,20 +2,20 @@ package com.example.__iteration_1.classes;
 
 import com.example.__iteration_1.enums.DaysOfOperation;
 
-import java.sql.Time;
+import java.util.List;
 
 public class Connection {
 
-    String routeId;
+    private String routeId;
     City departureCity;
     City arrivalCity;
     Timetable timetable;
     Train train;
-    DaysOfOperation daysOfOperation;
+    List<DaysOfOperation> daysOfOperation;
     FirstClassTicket firstClassTicket;
     SecondClassTicket secondClassTicket;
 
-    public Connection(String routeId, City departureCity, City arrivalCity, Timetable timetable, Train train, DaysOfOperation daysOfOperation, FirstClassTicket firstClassTicket, SecondClassTicket secondClassTicket) {
+    public Connection(String routeId, City departureCity, City arrivalCity, Timetable timetable, Train train, List<DaysOfOperation> daysOfOperation, FirstClassTicket firstClassTicket, SecondClassTicket secondClassTicket) {
         this.routeId = routeId;
         this.departureCity = departureCity;
         this.arrivalCity = arrivalCity;
@@ -66,13 +66,13 @@ public class Connection {
         this.train = train;
     }
 
-    public DaysOfOperation getDaysOfOperation() {
+    public List<DaysOfOperation> getDaysOfOperation() {
         return daysOfOperation;
     }
-
-    public void setDaysOfOperation(DaysOfOperation daysOfOperation) {
-        this.daysOfOperation = daysOfOperation;
-    }
+//
+//    public void setDaysOfOperation(DaysOfOperation daysOfOperation) {
+//        this.daysOfOperation = daysOfOperation;
+//    }
 
     public FirstClassTicket getFirstClassTicket() {
         return firstClassTicket;
@@ -92,15 +92,15 @@ public class Connection {
 
     @Override
     public String toString() {
-        return "Connection{" +
-                "routeId='" + routeId + '\'' +
-                ", departureCity=" + departureCity +
-                ", arrivalCity=" + arrivalCity +
-                ", timetable=" + timetable +
-                ", train=" + train +
-                ", daysOfOperation=" + daysOfOperation +
-                ", firstClassTicket=" + firstClassTicket +
-                ", secondClassTicket=" + secondClassTicket +
-                '}';
+        return String.format(
+                "| %-30s | %-30s | %-30s | %-30s | %-40s | %-40s | %-40s |",
+                departureCity,
+                arrivalCity,
+                timetable,
+                train,
+                daysOfOperation,
+                firstClassTicket,
+                secondClassTicket
+        );
     }
 }
