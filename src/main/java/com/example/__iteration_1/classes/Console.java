@@ -4,10 +4,7 @@ import com.example.__iteration_1.enums.DaysOfOperation;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -27,9 +24,28 @@ public class Console {
         catalog.readFile(csv);
     }
 
-    public void showResults(){
-        catalog.showResults();
+    public List<Connection> showResults() {
+        return resultsList = catalog.showResults();
     }
+
+    public List<Connection> sortResultsByTripDuration(String order) {
+        Comparator<Connection> comparator = Comparator.comparingLong(
+                c -> c.getTimetable().getDuration()
+        );
+        if ("desc".equalsIgnoreCase(order)) {
+            comparator = comparator.reversed();
+        }
+        resultsList.sort(comparator);
+        return resultsList;
+    }
+
+
+    public void printResults() {
+        for (Connection connection : resultsList) {
+            System.out.println(connection);
+        }
+    }
+
 
 
 }

@@ -84,8 +84,9 @@ public class ConnectionCatalog {
         }
     }
 
-    public void showResults(){
-        resultsList.forEach(connection -> {System.out.println(connection);});
+    public List<Connection> showResults(){
+        return resultsList;
     }
+
 
 }

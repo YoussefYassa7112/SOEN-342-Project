@@ -13,8 +13,11 @@ public class Application {
 
 		Console c = new Console();
 		c.readFile();
-		c.showResults();
+		c.printResults();
 		System.out.println("Hello World");
+		c.showResults();
+		c.sortResultsByTripDuration("asc");
+		c.printResults();
 	}
 
 }
