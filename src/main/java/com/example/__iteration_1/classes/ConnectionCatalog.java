@@ -4,6 +4,7 @@ import com.example.__iteration_1.enums.DaysOfOperation;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -88,5 +89,58 @@ public class ConnectionCatalog {
         return resultsList;
     }
 
+    public List<Connection> getAllConnections(){
+        return resultsList;
+    }
 
+
+    public List<Connection> getConnectionsByDepartureCity(String value) {
+        connections.clear();
+        for (Connection connection : resultsList) {
+            if (connection.getDepartureCity().getName().equalsIgnoreCase(value)) {
+                connections.add(connection);
+            }
+        }
+        return connections;
+    }
+
+    public List<Connection> getConnectionsByArrivalCity(String value) {
+        connections.clear();
+        for (Connection connection : resultsList) {
+            if (connection.getArrivalCity().getName().equalsIgnoreCase(value)) {
+                connections.add(connection);
+            }
+        }
+        return connections;
+    }
+
+    public List<Connection> getConnectionsByDayOfOperation(DaysOfOperation dayOfOperation) {
+        connections.clear();
+        for (Connection connection : resultsList) {
+            if (connection.getDaysOfOperation().contains(dayOfOperation)) {
+                connections.add(connection);
+            }
+        }
+        return connections;
+    }
+
+    public List<Connection> getConnectionsByDepartureTime(LocalTime time) {
+        connections.clear();
+        for (Connection connection : resultsList) {
+            if (connection.getTimetable().getDepartureTime().equals(time)) {
+                connections.add(connection);
+            }
+        }
+        return connections;
+    }
+
+    public List<Connection> getConnectionsByArrivalTimeBefore(LocalTime time) {
+        connections.clear();
+        for (Connection connection : resultsList) {
+            if (connection.getTimetable().getArrivalTime().equals(time)) {
+                connections.add(connection);
+            }
+        }
+        return connections;
+    }
 }

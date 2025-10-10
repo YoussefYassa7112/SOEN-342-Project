@@ -7,11 +7,11 @@ import java.time.Duration;
 import java.time.LocalTime;
 
 public class Timetable {
-    LocalTime departureTime;
-    LocalTime arrivalTime;
-    Long duration;
-    String testDep;
-    String testAr;
+    private LocalTime departureTime;
+    private LocalTime arrivalTime;
+    private Long duration;
+    private String testDep;
+    private String testAr;
 
     public Timetable(String departureTime, String arrivalTime) {
         this.departureTime = LocalTime.parse(departureTime.substring(0, 5));

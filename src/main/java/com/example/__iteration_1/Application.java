@@ -13,11 +13,17 @@ public class Application {
 
 		Console c = new Console();
 		c.readFile();
-		c.printResults();
-		System.out.println("Hello World");
-		c.showResults();
-		c.sortResultsByTripDuration("asc");
-		c.printResults();
+//		c.printResults();
+//		System.out.println("Hello World");
+//		c.showResults();
+//		c.sortResultsByTripDuration("asc");
+//		c.printResults();
+
+		//c.searchConnection();
+		c.searchConnection("duration", "140");
+		for(int i = 0; i<c.getResultsList().size(); i++){
+			System.out.println(c.getResultsList().get(i));
+		}
 	}
 
 }

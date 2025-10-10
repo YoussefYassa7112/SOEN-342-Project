@@ -46,6 +46,41 @@ public class Console {
         }
     }
 
+    public void searchConnection(){
+        resultsList = catalog.getAllConnections();
+    }
+
+    public void searchConnection(String parameter, String value){
+        switch(parameter){
+            case "departureCity":
+                resultsList.clear();
+                resultsList = catalog.getConnectionsByDepartureCity(value);
+                break;
+            case "arrivalCity":
+                resultsList = catalog.getConnectionsByArrivalCity(value);
+                break;
+            case "dayOfOperation":
+                resultsList = catalog.getConnectionsByDayOfOperation(DaysOfOperation.valueOf(value));
+                break;
+            case "departureTime":
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+                LocalTime time = LocalTime.parse(value, formatter);
+                resultsList = catalog.getConnectionsByDepartureTime(time);
+                break;
+            case "arrivalTime":
+                DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HH:mm");
+                LocalTime time2 = LocalTime.parse(value, formatter2);
+                resultsList = catalog.getConnectionsByArrivalTimeBefore(time2);
+                break;
+            default:
+                System.out.println("Invalid parameter");
+        }
+    }
+
+    public List<Connection> getResultsList() {
+        return resultsList;
+    }
+
 
 
 }

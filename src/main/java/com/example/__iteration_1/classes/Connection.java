@@ -66,9 +66,9 @@ public class Connection {
         this.train = train;
     }
 
-//    public DaysOfOperation getDaysOfOperation() {
-//        return daysOfOperation;
-//    }
+    public List<DaysOfOperation> getDaysOfOperation() {
+        return daysOfOperation;
+    }
 //
 //    public void setDaysOfOperation(DaysOfOperation daysOfOperation) {
 //        this.daysOfOperation = daysOfOperation;
