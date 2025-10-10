@@ -10,14 +10,10 @@ public class Timetable {
     private LocalTime departureTime;
     private LocalTime arrivalTime;
     private Long duration;
-    private String testDep;
-    private String testAr;
 
     public Timetable(String departureTime, String arrivalTime) {
         this.departureTime = LocalTime.parse(departureTime.substring(0, 5));
         this.arrivalTime = LocalTime.parse(arrivalTime.substring(0, 5));
-        this.testDep = departureTime;
-        this.testAr = arrivalTime;
 
         long depMinutes = this.departureTime.getHour() * 60L + this.departureTime.getMinute();
         long arrMinutes = this.arrivalTime.getHour() * 60L + this.arrivalTime.getMinute();
@@ -36,8 +32,6 @@ public class Timetable {
                 "departureTime=" + departureTime +
                 ", arrivalTime=" + arrivalTime +
                 ", duration=" + duration +
-                ", testDep=" + testDep + '\'' +
-                ", testAr=" + testAr + '\'' +
                 '}';
     }
 
@@ -60,10 +54,5 @@ public class Timetable {
         return duration;
     }
 
-    private String formatDuration(Duration d) {
-        long hours = d.toHours();
-        long minutes = d.toMinutesPart();
-        return String.format("%dh %02dm", hours, minutes);
-    }
 
 }
