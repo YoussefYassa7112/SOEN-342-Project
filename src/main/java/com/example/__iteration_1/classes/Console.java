@@ -26,8 +26,12 @@ public class Console {
         catalog.readFile(csv);
     }
 
+    public void oneStop(){catalog.transitive();}
+
+    public void TwoStop(){catalog.transitive();}
+
     public void  showResults() {
-        catalog.showResults();
+        catalog.transitiveTwoStops();
     }
 
 //    public List<Connection> sortResultsByTripDuration() {
