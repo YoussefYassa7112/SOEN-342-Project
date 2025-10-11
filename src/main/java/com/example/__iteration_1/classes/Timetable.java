@@ -7,20 +7,21 @@ import java.time.Duration;
 import java.time.LocalTime;
 
 public class Timetable {
-    LocalTime departureTime;
-    LocalTime arrivalTime;
-    Duration duration;
+    private LocalTime departureTime;
+    private LocalTime arrivalTime;
+    private Long duration;
 
     public Timetable(String departureTime, String arrivalTime) {
         this.departureTime = LocalTime.parse(departureTime.substring(0, 5));
         this.arrivalTime = LocalTime.parse(arrivalTime.substring(0, 5));
 
+        long depMinutes = this.departureTime.getHour() * 60L + this.departureTime.getMinute();
+        long arrMinutes = this.arrivalTime.getHour() * 60L + this.arrivalTime.getMinute();
         if(arrivalTime.contains("+1")) {
-            duration = Duration.between(this.arrivalTime ,this.departureTime);
-            duration.plusMinutes(1440);
+            duration=24L*60L-depMinutes+arrMinutes;
         }
         else{
-            duration = Duration.between(this.departureTime ,this.arrivalTime);
+            duration = arrMinutes - depMinutes;
         }
 
     }
@@ -48,4 +49,10 @@ public class Timetable {
     public void setArrivalTime(LocalTime arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
+
+    public Long getDuration() {
+        return duration;
+    }
+
+
 }

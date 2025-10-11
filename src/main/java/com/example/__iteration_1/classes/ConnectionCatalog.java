@@ -14,6 +14,7 @@ public class ConnectionCatalog {
     List<Connection> connections;
     private static final String[] DAY_ORDER = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
     private List<Connection> resultsList = new ArrayList();
+    private List<Connection> direct = new ArrayList<>();
 
     public ConnectionCatalog() {
         connections = new ArrayList<>();
@@ -81,6 +82,7 @@ public class ConnectionCatalog {
 
             Connection connection = new Connection(routeId, departureCity, arrivalCity, timetable, train, result, firstClassTicket, secondClassTicket);
             resultsList.add(connection);
+            direct.add(connection);
         }
     }
 
@@ -88,13 +90,12 @@ public class ConnectionCatalog {
 //        resultsList.forEach(connection -> {System.out.println(connection);});
 //    }
 
-
+    List<Connection> newConnections = new ArrayList<>();
     public void transitive() {
-        List<Connection> newConnections = new ArrayList<>();
 
         for (Connection c1 : resultsList) {
             for (Connection c2 : resultsList) {
-                if ((c1 != c2 && c1.getArrivalCity().equals(c2.getDepartureCity())) && c2.timetable.departureTime.isAfter(c1.timetable.arrivalTime)) {
+                if ((c1 != c2 && c1.getArrivalCity().equals(c2.getDepartureCity())) && c2.timetable.getDepartureTime().isAfter(c1.timetable.getArrivalTime())) {
                     newConnections.add(new Connection(c1, c2));
                 }
             }
@@ -118,8 +119,8 @@ public class ConnectionCatalog {
     public void transitiveTwoStops() {
         List<Connection> twoStopConnections = new ArrayList<>();
 
-        for (Connection c1 : resultsList) {
-            for (Connection c2 : resultsList) {
+        for (Connection c1 : direct) {
+            for (Connection c2 : direct) {
                 // 1-stop check: c1 → c2
                 if (c1 != c2 &&
                         c1.getArrivalCity().equals(c2.getDepartureCity()) &&
@@ -129,12 +130,12 @@ public class ConnectionCatalog {
 
                     Connection oneStop = new Connection(c1, c2);
 
-                    for (Connection c3 : resultsList) {
+                    for (Connection c3 : direct) {
                         // 2-stop check: c2 → c3
                         if (c3 != c1 && c3 != c2 &&
                                 c2.getArrivalCity().equals(c3.getDepartureCity()) &&
                                 isValidTime(c2, c3) &&
-                                !c3.getDaysOfOperation().isEmpty() && c3.timetable.departureTime.isAfter(oneStop.timetable.arrivalTime)){
+                                !c3.getDaysOfOperation().isEmpty() && c3.timetable.getDepartureTime().isAfter(oneStop.timetable.getArrivalTime())){
 
                             // Create a 2-stop connection: c1 → c2 → c3
                             twoStopConnections.add(new Connection(oneStop, c3));
