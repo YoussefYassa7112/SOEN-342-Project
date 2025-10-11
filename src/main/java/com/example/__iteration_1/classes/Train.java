@@ -12,7 +12,6 @@ public class Train {
         this.trainType = t1.getTrainType() + " + " + t2.getTrainType();
     }
 
-
     public String getTrainType() {
         return trainType;
     }

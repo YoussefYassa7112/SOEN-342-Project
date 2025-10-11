@@ -1,5 +1,7 @@
 package com.example.__iteration_1.classes;
 
+import com.example.__iteration_1.enums.DaysOfOperation;
+
 import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalTime;
