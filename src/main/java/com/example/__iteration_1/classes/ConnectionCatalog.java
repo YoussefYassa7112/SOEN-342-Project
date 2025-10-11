@@ -121,7 +121,7 @@ public class ConnectionCatalog {
 
         for (Connection c1 : direct) {
             for (Connection c2 : direct) {
-                // 1-stop check: c1 → c2
+                // 1-stop
                 if (c1 != c2 &&
                         c1.getArrivalCity().equals(c2.getDepartureCity()) &&
                         isValidTime(c1, c2) &&
@@ -131,7 +131,7 @@ public class ConnectionCatalog {
                     Connection oneStop = new Connection(c1, c2);
 
                     for (Connection c3 : direct) {
-                        // 2-stop check: c2 → c3
+                        // 2-stop
                         if (c3 != c1 && c3 != c2 &&
                                 c2.getArrivalCity().equals(c3.getDepartureCity()) &&
                                 isValidTime(c2, c3) &&

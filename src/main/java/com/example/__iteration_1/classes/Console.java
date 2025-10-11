@@ -1,5 +1,4 @@
 package com.example.__iteration_1.classes;
-import com.example.__iteration_1.enums.DaysOfOperation;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
