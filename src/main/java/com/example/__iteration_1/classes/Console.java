@@ -30,56 +30,6 @@ public class Console {
         catalog.showResults();
     }
 
-//    public List<Connection> sortResultsByTripDuration() {
-//        System.out.println("Would you like to sort by trip duration in ascending or descending order? (Enter 'asc' or 'desc'): ");
-//        Scanner scanner = new Scanner(System.in);
-//        String order = scanner.nextLine().trim().toLowerCase();
-//        if (!order.equals("asc") && !order.equals("desc")) {
-//            System.out.println("Invalid input. Default to ascending order.");
-//            order = "asc";
-//        }
-//        Comparator<Connection> comparator = Comparator.comparingLong(
-//                c -> c.getTimetable().getDuration()
-//        );
-//        if ("desc".equalsIgnoreCase(order)) {
-//            comparator = comparator.reversed();
-//        }
-//        resultsList.sort(comparator);
-//        return resultsList;
-//    }
-//
-//    public List<Connection> sortResultsByPrice() {
-//        while(true) {
-//            System.out.print("Would you like to sort by First Class or Second Class ticket price? (Enter '1' or '2'): ");
-//            Scanner scanner = new Scanner(System.in);
-//            String choice = scanner.nextLine();
-//            System.out.println("Would you like to sort in ascending or descending order? (Enter 'asc' or 'desc'): ");
-//            String order = scanner.nextLine().trim().toLowerCase();
-//            if (!order.equals("asc") && !order.equals("desc")) {
-//                System.out.println("Invalid input. Default to ascending order.");
-//                order = "asc";
-//            }
-//            Comparator<Connection> comparator;
-//            if (choice.equals("1")) {
-//                comparator = Comparator.comparingDouble(c -> c.getFirstClassTicket().getPrice());
-//                if ("desc".equalsIgnoreCase(order)) {
-//                    comparator = comparator.reversed();
-//                }
-//                resultsList.sort(comparator);
-//                return resultsList;
-//            } else if (choice.equals("2")) {
-//                comparator = Comparator.comparingDouble(c -> c.getSecondClassTicket().getPrice());
-//                if ("desc".equalsIgnoreCase(order)) {
-//                    comparator = comparator.reversed();
-//                }
-//                resultsList.sort(comparator);
-//                return resultsList;
-//            } else {
-//                System.out.println("Invalid choice.");
-//            }
-//        }
-//    }
-
     public List<Connection> sortResultsByTripDuration() {
         return catalog.sortResultsByTripDuration();
     }
@@ -131,12 +81,18 @@ public class Console {
         }
     }
 
+    public void resetSearch(){
+                resultsList.clear();
+                resultsList = catalog.getConnections();
+    }
+
     public List<Connection> getResultsList() {
         return resultsList;
     }
 
-
-
+    public ConnectionCatalog getCatalog() {
+        return catalog;
+    }
 }
 
 

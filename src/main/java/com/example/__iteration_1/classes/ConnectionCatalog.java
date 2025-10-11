@@ -198,4 +198,13 @@ public class ConnectionCatalog {
             }
         }
     }
+
+    public List<Connection> getConnections() {
+        resultsList.addAll(connections);
+        return resultsList;
+    }
+
+    public List<Connection> getResultsList() {
+        return resultsList;
+    }
 }
