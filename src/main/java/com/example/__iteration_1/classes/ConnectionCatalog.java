@@ -12,10 +12,12 @@ public class ConnectionCatalog {
     private List<Connection> connections;
     private static final String[] DAY_ORDER = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
     private List<Connection> resultsList;
+    private List<Connection> direct;
 
     public ConnectionCatalog() {
         connections = new ArrayList<>();
         resultsList = new ArrayList<>();
+        direct = new ArrayList<>();
     }
 
     public void readFile(String csv) {
@@ -89,15 +91,15 @@ public class ConnectionCatalog {
     List<Connection> newConnections = new ArrayList<>();
     public void transitive() {
 
-        for (Connection c1 : resultsList) {
-            for (Connection c2 : resultsList) {
+        for (Connection c1 : direct) {
+            for (Connection c2 : direct) {
                 if ((c1 != c2 && c1.getArrivalCity().equals(c2.getDepartureCity())) && c2.timetable.getDepartureTime().isAfter(c1.timetable.getArrivalTime())) {
                     newConnections.add(new Connection(c1, c2));
                 }
             }
         }
 
-        resultsList.addAll(newConnections);
+        connections.addAll(newConnections);
 
         System.out.println("Added " + newConnections.size() + " transitive connections.");
     }
@@ -141,7 +143,7 @@ public class ConnectionCatalog {
             }
         }
 
-        resultsList.addAll(twoStopConnections);
+        connections.addAll(twoStopConnections);
         System.out.println("Added " + twoStopConnections.size() + " 2-stop connections.");
     }
 

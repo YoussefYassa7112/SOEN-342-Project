@@ -28,10 +28,10 @@ public class Console {
 
     public void oneStop(){catalog.transitive();}
 
-    public void TwoStop(){catalog.transitive();}
+    public void twoStop(){catalog.transitiveTwoStops();}
 
     public void  showResults() {
-        catalog.transitiveTwoStops();
+        resultsList = catalog.showResults();
     }
 
 //    public List<Connection> sortResultsByTripDuration() {

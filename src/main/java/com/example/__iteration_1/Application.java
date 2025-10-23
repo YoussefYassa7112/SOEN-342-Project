@@ -15,6 +15,8 @@ public class Application {
 			c.readFile();
 			System.out.println("Welcome to the Train Ticketing System!");
 
+            c.oneStop();
+            c.twoStop();
 			c.searchConnection("arrivalCity", "Dublin");
 			c.showResults();
 			c.sortResultsByTripDuration();

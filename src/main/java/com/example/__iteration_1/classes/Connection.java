@@ -2,7 +2,11 @@ package com.example.__iteration_1.classes;
 
 import com.example.__iteration_1.enums.DaysOfOperation;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 
 public class Connection {
 
