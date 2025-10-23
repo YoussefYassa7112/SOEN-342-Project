@@ -20,4 +20,17 @@ public class City {
     public String toString() {
         return name;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;              // same reference
+        if (o == null || getClass() != o.getClass()) return false; // null or different class
+        City city = (City) o;
+        return name.equalsIgnoreCase(city.name); // compare names
+    }
+
+    @Override
+    public int hashCode() {
+        return name.toLowerCase().hashCode();
+    }
 }

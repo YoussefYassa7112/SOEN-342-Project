@@ -12,10 +12,12 @@ public class ConnectionCatalog {
     private List<Connection> connections;
     private static final String[] DAY_ORDER = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
     private List<Connection> resultsList;
+    private List<Connection> direct;
 
     public ConnectionCatalog() {
         connections = new ArrayList<>();
         resultsList = new ArrayList<>();
+        direct = new ArrayList<>();
     }
 
     public void readFile(String csv) {
@@ -81,23 +83,85 @@ public class ConnectionCatalog {
             Connection connection = new Connection(routeId, departureCity, arrivalCity, timetable, train, result, firstClassTicket, secondClassTicket);
             connections.add(connection);
             resultsList.add(connection);
+            direct.add(connection);
         }
         scanner.close();
     }
+
+
+    List<Connection> newConnections = new ArrayList<>();
+    public void transitive() {
+
+        for (Connection c1 : direct) {
+            for (Connection c2 : direct) {
+                if ((c1 != c2 && c1.getArrivalCity().equals(c2.getDepartureCity())) && c2.timetable.getDepartureTime().isAfter(c1.timetable.getArrivalTime())) {
+                    newConnections.add(new Connection(c1, c2));
+                }
+            }
+        }
+
+        connections.addAll(newConnections);
+
+        System.out.println("Added " + newConnections.size() + " transitive connections.");
+    }
+
+
+    private boolean isValidTime(Connection first, Connection second) {
+        long arrival = first.getTimetable().getArrivalTime().toSecondOfDay();
+        long departure = second.getTimetable().getDepartureTime().toSecondOfDay();
+
+        if (departure < arrival) departure += 24 * 3600; // overnight
+        return departure >= arrival;
+    }
+
+
+    public void transitiveTwoStops() {
+        List<Connection> twoStopConnections = new ArrayList<>();
+
+        for (Connection c1 : direct) {
+            for (Connection c2 : direct) {
+                // 1-stop check: c1 → c2
+                if (c1 != c2 &&
+                        c1.getArrivalCity().equals(c2.getDepartureCity()) &&
+                        isValidTime(c1, c2) &&
+                        !c1.getDaysOfOperation().isEmpty() &&
+                        !c2.getDaysOfOperation().isEmpty()) {
+
+                    Connection oneStop = new Connection(c1, c2);
+
+                    for (Connection c3 : direct) {
+                        // 2-stop check: c2 → c3
+                        if (c3 != c1 && c3 != c2 &&
+                                c2.getArrivalCity().equals(c3.getDepartureCity()) &&
+                                isValidTime(c2, c3) &&
+                                !c3.getDaysOfOperation().isEmpty() && c3.timetable.getDepartureTime().isAfter(oneStop.timetable.getArrivalTime())){
+
+                            // Create a 2-stop connection: c1 → c2 → c3
+                            twoStopConnections.add(new Connection(oneStop, c3));
+                        }
+                    }
+                }
+            }
+        }
+
+        connections.addAll(twoStopConnections);
+        System.out.println("Added " + twoStopConnections.size() + " 2-stop connections.");
+    }
+
 
     public List<Connection> showResults(){
         for (Connection connection : resultsList) {
             System.out.println(connection);
         }
         return resultsList;
-   }
+    }
 
     public List<Connection> getAllConnections(){
         for (Connection connection : connections) {
             System.out.println(connection);
         }
         return connections;
-   }
+    }
 
 
     public List<Connection> getConnectionsByDepartureCity(String value) {
