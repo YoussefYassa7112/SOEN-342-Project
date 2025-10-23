@@ -88,6 +88,7 @@ public class ConnectionCatalog {
         scanner.close();
     }
 
+
     List<Connection> newConnections = new ArrayList<>();
     public void transitive() {
 
@@ -153,14 +154,14 @@ public class ConnectionCatalog {
             System.out.println(connection);
         }
         return resultsList;
-   }
+    }
 
     public List<Connection> getAllConnections(){
         for (Connection connection : connections) {
             System.out.println(connection);
         }
         return connections;
-   }
+    }
 
 
     public List<Connection> getConnectionsByDepartureCity(String value) {
@@ -260,5 +261,14 @@ public class ConnectionCatalog {
                 System.out.println("Invalid choice.");
             }
         }
+    }
+
+    public List<Connection> getConnections() {
+        resultsList.addAll(connections);
+        return resultsList;
+    }
+
+    public List<Connection> getResultsList() {
+        return resultsList;
     }
 }
