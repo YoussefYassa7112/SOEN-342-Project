@@ -58,7 +58,6 @@ public class Connection {
         this.daysOfOperation = new ArrayList<>(common);
 
 
-        // combine ticket prices
         this.firstClassTicket = new FirstClassTicket(
                 c1.getFirstClassTicket().getPrice() + c2.getFirstClassTicket().getPrice()
         );
@@ -66,7 +65,6 @@ public class Connection {
                 c1.getSecondClassTicket().getPrice() + c2.getSecondClassTicket().getPrice()
         );
 
-        // optionally create a new route ID for clarity
         this.routeId = c1.getRouteId() + "-" + c2.getRouteId();
     }
 
@@ -142,7 +140,6 @@ public class Connection {
                 arrivalCity,
                 timetable,
                 train,
-                daysOfOperation,
                 firstClassTicket,
                 secondClassTicket
         );

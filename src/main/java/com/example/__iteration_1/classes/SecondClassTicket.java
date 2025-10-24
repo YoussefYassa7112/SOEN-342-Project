@@ -5,7 +5,8 @@ public class SecondClassTicket extends Ticket {
     private double price;
 
     public SecondClassTicket(double price) {
-      this.price = price;
+        super(price);
+        this.price = price;
     }
 
     @Override
@@ -21,7 +22,8 @@ public class SecondClassTicket extends Ticket {
     @Override
     public String toString() {
         return "SecondClassTicket{" +
-                " price in euro =" + price +
+                "ticketId=" + getTicketId() +
+                ", price in euro=" + price +
                 '}';
     }
 }
