@@ -23,7 +23,9 @@ public class Console {
     }
 
     public void readFile() {
+
         catalog.readFile(csv);
+        resultsList = catalog.getResults();
     }
 
     public void oneStop(){
@@ -35,10 +37,12 @@ public class Console {
     }
 
     public List<Connection> sortResultsByTripDuration() {
-        return catalog.sortResultsByTripDuration();
+        resultsList = catalog.sortResultsByTripDuration();
+        return resultsList;
     }
     public List<Connection> sortResultsByPrice() {
-        return catalog.sortResultsByPrice();
+        resultsList = catalog.sortResultsByPrice();
+        return resultsList;
     }
 
 
@@ -54,21 +58,22 @@ public class Console {
     }
 
 
-    public void searchConnection(){
-        resultsList = catalog.getAllConnections();
+    public void searchConnection() {
+        catalog.startNewSearch();
+        resultsList = catalog.getResults();
+        printResults();
     }
 
-    public void searchConnection(String parameter, String value){
-        switch(parameter){
+    public void searchConnection(String parameter, String value) {
+        switch (parameter) {
             case "departureCity":
-                resultsList.clear();
                 resultsList = catalog.getConnectionsByDepartureCity(value);
                 break;
             case "arrivalCity":
                 resultsList = catalog.getConnectionsByArrivalCity(value);
                 break;
             case "dayOfOperation":
-                resultsList = catalog.getConnectionsByDayOfOperation(DaysOfOperation.valueOf(value));
+                resultsList = catalog.getConnectionsByDayOfOperation(DaysOfOperation.valueOf(value.toUpperCase()));
                 break;
             case "departureTime":
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -86,8 +91,7 @@ public class Console {
     }
 
     public void resetSearch(){
-        resultsList.clear();
-        resultsList = catalog.getConnections();
+        resultsList = catalog.resetFilters();
     }
 
     public List<Connection> getResultsList() {

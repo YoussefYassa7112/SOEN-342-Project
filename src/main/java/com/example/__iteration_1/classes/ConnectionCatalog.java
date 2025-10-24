@@ -15,9 +15,9 @@ public class ConnectionCatalog {
     private List<Connection> direct;
 
     public ConnectionCatalog() {
-        connections = new ArrayList<>();
-        resultsList = new ArrayList<>();
-        direct = new ArrayList<>();
+        this.connections = new ArrayList<>();
+        this.resultsList = new ArrayList<>();
+        this.direct = new ArrayList<>();
     }
 
     public void readFile(String csv) {
@@ -82,10 +82,10 @@ public class ConnectionCatalog {
 
             Connection connection = new Connection(routeId, departureCity, arrivalCity, timetable, train, result, firstClassTicket, secondClassTicket);
             connections.add(connection);
-            resultsList.add(connection);
             direct.add(connection);
         }
         scanner.close();
+        startNewSearch();
     }
 
 
@@ -156,61 +156,85 @@ public class ConnectionCatalog {
         return resultsList;
     }
 
-    public List<Connection> getAllConnections(){
-        for (Connection connection : connections) {
-            System.out.println(connection);
+    public List<Connection> startNewSearch() {
+        resultsList = new ArrayList<>();
+        for (int i = 0; i < connections.size(); i++) {
+            resultsList.add(connections.get(i));
         }
-        return connections;
+        return resultsList;
     }
 
 
     public List<Connection> getConnectionsByDepartureCity(String value) {
-        resultsList.clear();
-        for (Connection connection : connections) {
-            if (connection.getDepartureCity().getName().equalsIgnoreCase(value)) {
-                resultsList.add(connection);
+        if (value == null) return null;
+        String target = value.trim().toLowerCase();
+        List<Connection> filtered = new ArrayList<>();
+        for (int i = 0; i < resultsList.size(); i++) {
+            Connection c = resultsList.get(i);
+            if (c.getDepartureCity().getName().equalsIgnoreCase(target)) {
+                filtered.add(c);
             }
         }
+        resultsList = filtered;
         return resultsList;
     }
 
     public List<Connection> getConnectionsByArrivalCity(String value) {
-        resultsList.clear();
-        for (Connection connection : connections) {
-            if (connection.getArrivalCity().getName().equalsIgnoreCase(value)) {
-                resultsList.add(connection);
+        if (value == null) return null;
+        String target = value.trim().toLowerCase();
+        List<Connection> filtered = new ArrayList<>();
+        for (int i = 0; i < resultsList.size(); i++) {
+            Connection c = resultsList.get(i);
+            if (c.getArrivalCity().getName().equalsIgnoreCase(target)) {
+                filtered.add(c);
             }
         }
+        resultsList = filtered;
         return resultsList;
     }
 
     public List<Connection> getConnectionsByDayOfOperation(DaysOfOperation dayOfOperation) {
-        resultsList.clear();
-        for (Connection connection : connections) {
-            if (connection.getDaysOfOperation().contains(dayOfOperation)) {
-                resultsList.add(connection);
+        if (dayOfOperation == null) return null;
+        List<Connection> filtered = new ArrayList<>();
+        for (int i = 0; i < resultsList.size(); i++) {
+            Connection c = resultsList.get(i);
+            List<DaysOfOperation> ops = c.getDaysOfOperation();
+            if (ops != null) {
+                for (int j = 0; j < ops.size(); j++) {
+                    if (ops.get(j) == dayOfOperation) {
+                        filtered.add(c);
+                        break;
+                    }
+                }
             }
         }
+        resultsList = filtered;
         return resultsList;
     }
 
     public List<Connection> getConnectionsByDepartureTime(LocalTime time) {
-        resultsList.clear();
-        for (Connection connection : connections) {
-            if (connection.getTimetable().getDepartureTime().equals(time)) {
-                resultsList.add(connection);
+        if (time == null) return null;
+        List<Connection> filtered = new ArrayList<>();
+        for (int i = 0; i < resultsList.size(); i++) {
+            Connection c = resultsList.get(i);
+            if (time.equals(c.getTimetable().getDepartureTime())) {
+                filtered.add(c);
             }
         }
+        resultsList = filtered;
         return resultsList;
     }
 
     public List<Connection> getConnectionsByArrivalTimeBefore(LocalTime time) {
-        resultsList.clear();
-        for (Connection connection : connections) {
-            if (connection.getTimetable().getArrivalTime().equals(time)) {
-                resultsList.add(connection);
+        if (time == null) return null;
+        List<Connection> filtered = new ArrayList<>();
+        for (int i = 0; i < resultsList.size(); i++) {
+            Connection c = resultsList.get(i);
+            if (time.equals(c.getTimetable().getArrivalTime())) {
+                filtered.add(c);
             }
         }
+        resultsList = filtered;
         return resultsList;
     }
 
@@ -263,12 +287,21 @@ public class ConnectionCatalog {
         }
     }
 
-    public List<Connection> getConnections() {
-        resultsList.addAll(connections);
-        return resultsList;
+    public List<Connection> getAllConnections() {
+        // return a copy to avoid external modification
+        List<Connection> copy = new ArrayList<>();
+        for (int i = 0; i < connections.size(); i++) copy.add(connections.get(i));
+        return copy;
     }
 
-    public List<Connection> getResultsList() {
+    public List<Connection> getResults() {
+        List<Connection> copy = new ArrayList<>();
+        for (int i = 0; i < resultsList.size(); i++) copy.add(resultsList.get(i));
+        return copy;
+    }
+
+    public List<Connection> resetFilters() {
+        startNewSearch();
         return resultsList;
     }
 }

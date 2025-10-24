@@ -38,7 +38,7 @@ public class Application {
                     System.out.println("Enter value to search (time-> hh:mm, days-> MON,TUE,WEN,THU,FRI,SAT,SUN):");
                     String value = scanner.nextLine();
                     c.searchConnection(parameter, value);
-                    if (c.getCatalog().getResultsList().isEmpty()) {
+                    if (c.getCatalog().getResults().isEmpty()) {
                         System.out.println("No connections found matching the criteria.");
                     } else{
                         c.showResults();
