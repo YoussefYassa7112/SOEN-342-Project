@@ -111,10 +111,6 @@ public class Connection {
     public List<DaysOfOperation> getDaysOfOperation() {
         return daysOfOperation;
     }
-//
-//    public void setDaysOfOperation(DaysOfOperation daysOfOperation) {
-//        this.daysOfOperation = daysOfOperation;
-//    }
 
     public FirstClassTicket getFirstClassTicket() {
         return firstClassTicket;

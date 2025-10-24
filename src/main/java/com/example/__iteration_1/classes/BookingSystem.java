@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class BookingSystem {
-    private Map<String, Client> clients; // Key: client ID
+    private Map<String, Client> clients;
     private List<Trip> allTrips;
 
     public BookingSystem() {
@@ -93,7 +93,6 @@ public class BookingSystem {
         if (!clients.containsKey(newTraveler.getId())) {
             clients.put(newTraveler.getId(), newTraveler);
         } else {
-            // Use the existing client object from the system
             newTraveler = clients.get(newTraveler.getId());
         }
 

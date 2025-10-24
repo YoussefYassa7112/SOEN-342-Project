@@ -289,7 +289,6 @@ public class ConnectionCatalog {
     }
 
     public List<Connection> getAllConnections() {
-        // return a copy to avoid external modification
         List<Connection> copy = new ArrayList<>();
         for (int i = 0; i < connections.size(); i++) copy.add(connections.get(i));
         return copy;

@@ -7,7 +7,7 @@ public class Client {
     private String firstName;
     private String lastName;
     private int age;
-    private String id; // generic ID (passport/state-id)
+    private String id;
     private List<Trip> trips;
 
     public Client(String firstName, String lastName, int age, String id) {

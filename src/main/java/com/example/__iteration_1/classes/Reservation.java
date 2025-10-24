@@ -4,6 +4,7 @@ public class Reservation {
     private Client client;
     private Connection connection;
     private Ticket ticket;
+    private String reservationName;
     private boolean isFirstClass;
 
     public Reservation(Client client, Connection connection, boolean isFirstClass) {
@@ -37,10 +38,11 @@ public class Reservation {
     @Override
     public String toString() {
         return "Reservation{" +
-                "client=" + client.getFirstName() + " " + client.getLastName() +
-                ", connection=" + connection.getDepartureCity() + " -> " + connection.getArrivalCity() +
+                "client=" + client +
+                ", connection=" + connection +
                 ", ticket=" + ticket +
-                ", class=" + (isFirstClass ? "First" : "Second") +
+                ", reservationName='" + reservationName + '\'' +
+                ", isFirstClass=" + isFirstClass +
                 '}';
     }
 }
