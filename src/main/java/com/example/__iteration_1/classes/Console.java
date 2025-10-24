@@ -86,8 +86,8 @@ public class Console {
     }
 
     public void resetSearch(){
-                resultsList.clear();
-                resultsList = catalog.getConnections();
+        resultsList.clear();
+        resultsList = catalog.getConnections();
     }
 
     public List<Connection> getResultsList() {
@@ -97,6 +97,10 @@ public class Console {
     public ConnectionCatalog getCatalog() {
         return catalog;
     }
+
+    public void showResults() {
+        for (Connection connection : resultsList) {
+            System.out.println(connection);
+        }
+    }
 }
-
-
