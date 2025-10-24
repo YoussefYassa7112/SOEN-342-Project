@@ -14,6 +14,7 @@ public class ConnectionCatalog {
     private List<Connection> resultsList;
     private List<Connection> direct;
 
+
     public ConnectionCatalog() {
         connections = new ArrayList<>();
         resultsList = new ArrayList<>();

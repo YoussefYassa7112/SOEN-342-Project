@@ -67,7 +67,7 @@ public class Console {
             case "arrivalCity":
                 resultsList = catalog.getConnectionsByArrivalCity(value);
                 break;
-            case "dayOfOperation":
+            case "daysOfOperation":
                 resultsList = catalog.getConnectionsByDayOfOperation(DaysOfOperation.valueOf(value));
                 break;
             case "departureTime":
