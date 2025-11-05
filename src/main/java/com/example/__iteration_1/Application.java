@@ -1,16 +1,22 @@
 package com.example.__iteration_1;
 
 import com.example.__iteration_1.classes.Console;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.util.Scanner;
 
 @SpringBootApplication
-public class Application {
+public class Application implements CommandLineRunner {
 
     public static void main(String[] args) {
-        //SpringApplication.run(Application.class, args);
+        SpringApplication app = new SpringApplication(Application.class);
+        app.setWebApplicationType(org.springframework.boot.WebApplicationType.NONE);
+        app.run(args);
+    }
 
+    @Override
+    public void run(String... args) {
         Console c = new Console();
         c.readFile();
         c.oneStop();
@@ -21,7 +27,7 @@ public class Application {
 
         Scanner scanner = new Scanner(System.in);
 
-        while(true){
+        while (true) {
             System.out.println("\n--- MAIN MENU ---");
             System.out.println("1. View all Connections");
             System.out.println("2. Search specific connections");
@@ -53,7 +59,7 @@ public class Application {
                     c.searchConnection(parameter, value);
                     if (c.getCatalog().getResults().isEmpty()) {
                         System.out.println("No connections found matching the criteria.");
-                    } else{
+                    } else {
                         c.showResults();
                     }
                     break;
