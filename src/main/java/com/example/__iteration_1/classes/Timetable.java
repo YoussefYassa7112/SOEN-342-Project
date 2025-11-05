@@ -11,19 +11,20 @@ public class Timetable {
     private LocalTime arrivalTime;
     private Long duration;
 
-    public Timetable(String departureTime, String arrivalTime) {
-        this.departureTime = LocalTime.parse(departureTime.substring(0, 5));
-        this.arrivalTime = LocalTime.parse(arrivalTime.substring(0, 5));
+    public Timetable(String departureTimeStr, String arrivalTimeStr) {
 
-        long depMinutes = this.departureTime.getHour() * 60L + this.departureTime.getMinute();
-        long arrMinutes = this.arrivalTime.getHour() * 60L + this.arrivalTime.getMinute();
-        if(arrivalTime.contains("+1")) {
-            duration=24L*60L-depMinutes+arrMinutes;
-        }
-        else{
+        this.departureTime = LocalTime.parse(departureTimeStr.substring(0, 5));
+        this.arrivalTime   = LocalTime.parse(arrivalTimeStr.substring(0, 5));
+
+        long depMinutes = this.departureTime.toSecondOfDay() / 60;
+        long arrMinutes = this.arrivalTime.toSecondOfDay() / 60;
+
+        if (arrivalTimeStr.contains("+1") || arrMinutes < depMinutes) {
+            // arrival is next day
+            duration = (24 * 60 - depMinutes) + arrMinutes;
+        } else {
             duration = arrMinutes - depMinutes;
         }
-
     }
 
     @Override

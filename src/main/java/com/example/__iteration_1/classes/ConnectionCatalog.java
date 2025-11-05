@@ -89,21 +89,21 @@ public class ConnectionCatalog {
         startNewSearch();
     }
 
+    List<Connection> oneStopConnections = new ArrayList<>();
 
-    List<Connection> newConnections = new ArrayList<>();
     public void transitive() {
 
         for (Connection c1 : direct) {
             for (Connection c2 : direct) {
-                if ((c1 != c2 && c1.getArrivalCity().equals(c2.getDepartureCity())) && c2.timetable.getDepartureTime().isAfter(c1.timetable.getArrivalTime())) {
-                    newConnections.add(new Connection(c1, c2));
+                if ((c1 != c2 && c1.getArrivalCity().equals(c2.getDepartureCity())) && c2.timetable.getDepartureTime().isAfter(c1.timetable.getArrivalTime()) && layover(c1, c2)) {
+                    oneStopConnections.add(new Connection(c1, c2));
                 }
             }
         }
 
-        connections.addAll(newConnections);
+        connections.addAll(oneStopConnections);
 
-        System.out.println("Added " + newConnections.size() + " transitive connections.");
+        System.out.println("Added " + oneStopConnections.size() + " transitive connections.");
     }
 
 
@@ -113,6 +113,25 @@ public class ConnectionCatalog {
 
         if (departure < arrival) departure += 24 * 3600; // overnight
         return departure >= arrival;
+    }
+
+    public boolean layover(Connection first, Connection second) {
+        LocalTime arrival   = first.getTimetable().getArrivalTime();
+        LocalTime departure = second.getTimetable().getDepartureTime();
+
+        long minutes = java.time.Duration.between(arrival, departure).toMinutes();
+
+        LocalTime sixAm = LocalTime.of(6, 0);
+        LocalTime sixPm = LocalTime.of(18, 0);
+
+        boolean isDayTime = !departure.isBefore(sixAm) && departure.isBefore(sixPm);
+
+        double minHours = isDayTime ? 0.5 : 1.5;
+        double maxHours = isDayTime ? 1.0 : 2.0;
+
+        boolean valid = minutes >= minHours * 60 && minutes <= maxHours * 60;
+
+        return valid;
     }
 
 
@@ -135,7 +154,7 @@ public class ConnectionCatalog {
                         if (c3 != c1 && c3 != c2 &&
                                 c2.getArrivalCity().equals(c3.getDepartureCity()) &&
                                 isValidTime(c2, c3) &&
-                                !c3.getDaysOfOperation().isEmpty() && c3.timetable.getDepartureTime().isAfter(oneStop.timetable.getArrivalTime())){
+                                !c3.getDaysOfOperation().isEmpty() && c3.timetable.getDepartureTime().isAfter(oneStop.timetable.getArrivalTime()) && layover(c2, c3)){
 
                             // Create a 2-stop connection: c1 → c2 → c3
                             twoStopConnections.add(new Connection(oneStop, c3));
