@@ -131,7 +131,7 @@ public class Connection {
     @Override
     public String toString() {
         return String.format(
-                "| %-30s | %-30s | %-30s | %-30s | %-40s | %-40s | %-40s |",
+                "| %-50s | %-50s | %-50s | %-50s | %-50s | %-50s |",
                 departureCity,
                 arrivalCity,
                 timetable,
