@@ -1,5 +1,10 @@
 package com.example.__iteration_1.classes;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+
+@Entity
+@DiscriminatorValue("FIRST_CLASS_TICKET")
 public class FirstClassTicket extends Ticket {
 
     private double price;
@@ -7,6 +12,10 @@ public class FirstClassTicket extends Ticket {
     public FirstClassTicket(double price) {
         super(price);
         this.price = price;
+    }
+
+    public FirstClassTicket() {
+        super();
     }
 
     @Override

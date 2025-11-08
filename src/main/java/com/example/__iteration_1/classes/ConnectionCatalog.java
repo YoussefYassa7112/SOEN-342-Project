@@ -89,21 +89,23 @@ public class ConnectionCatalog {
         startNewSearch();
     }
 
-    List<Connection> oneStopConnections = new ArrayList<>();
 
+    List<Connection> newConnections = new ArrayList<>();
     public void transitive() {
 
         for (Connection c1 : direct) {
             for (Connection c2 : direct) {
-                if ((c1 != c2 && c1.getArrivalCity().equals(c2.getDepartureCity())) && c2.timetable.getDepartureTime().isAfter(c1.timetable.getArrivalTime()) && layover(c1, c2)) {
-                    oneStopConnections.add(new Connection(c1, c2));
+                if ((c1 != c2 && c1.getArrivalCity().equals(c2.getDepartureCity())) 
+                    && c2.timetable.getDepartureTime().isAfter(c1.timetable.getArrivalTime())
+                    && isAcceptableLayover(c1, c2)) {
+                    newConnections.add(new Connection(c1, c2));
                 }
             }
         }
 
-        connections.addAll(oneStopConnections);
+        connections.addAll(newConnections);
 
-        System.out.println("Added " + oneStopConnections.size() + " transitive connections.");
+        System.out.println("Added " + newConnections.size() + " transitive connections (with layover policy).");
     }
 
 
@@ -111,27 +113,31 @@ public class ConnectionCatalog {
         long arrival = first.getTimetable().getArrivalTime().toSecondOfDay();
         long departure = second.getTimetable().getDepartureTime().toSecondOfDay();
 
-        if (departure < arrival) departure += 24 * 3600; // overnight
+        if (departure < arrival) departure += 24 * 3600;
         return departure >= arrival;
     }
 
-    public boolean layover(Connection first, Connection second) {
-        LocalTime arrival   = first.getTimetable().getArrivalTime();
-        LocalTime departure = second.getTimetable().getDepartureTime();
+    private boolean isAcceptableLayover(Connection first, Connection second) {
+        LocalTime arrivalTime = first.getTimetable().getArrivalTime();
+        LocalTime departureTime = second.getTimetable().getDepartureTime();
 
-        long minutes = java.time.Duration.between(arrival, departure).toMinutes();
+        long layoverMinutes;
+        if (departureTime.isBefore(arrivalTime)) {
+            layoverMinutes = (24 * 60) - (arrivalTime.getHour() * 60 + arrivalTime.getMinute()) 
+                           + (departureTime.getHour() * 60 + departureTime.getMinute());
+        } else {
+            layoverMinutes = (departureTime.getHour() * 60 + departureTime.getMinute()) 
+                           - (arrivalTime.getHour() * 60 + arrivalTime.getMinute());
+        }
 
-        LocalTime sixAm = LocalTime.of(6, 0);
-        LocalTime sixPm = LocalTime.of(18, 0);
-
-        boolean isDayTime = !departure.isBefore(sixAm) && departure.isBefore(sixPm);
-
-        double minHours = isDayTime ? 0.5 : 1.5;
-        double maxHours = isDayTime ? 1.0 : 2.0;
-
-        boolean valid = minutes >= minHours * 60 && minutes <= maxHours * 60;
-
-        return valid;
+        int arrivalHour = arrivalTime.getHour();
+        boolean isDayTime = arrivalHour >= 6 && arrivalHour < 18;
+        
+        if (isDayTime) {
+            return layoverMinutes >= 0 && layoverMinutes <= 120;
+        } else {
+            return layoverMinutes >= 0 && layoverMinutes <= 30;
+        }
     }
 
 
@@ -140,23 +146,23 @@ public class ConnectionCatalog {
 
         for (Connection c1 : direct) {
             for (Connection c2 : direct) {
-                // 1-stop check: c1 → c2
                 if (c1 != c2 &&
                         c1.getArrivalCity().equals(c2.getDepartureCity()) &&
                         isValidTime(c1, c2) &&
+                        isAcceptableLayover(c1, c2) &&
                         !c1.getDaysOfOperation().isEmpty() &&
                         !c2.getDaysOfOperation().isEmpty()) {
 
                     Connection oneStop = new Connection(c1, c2);
 
                     for (Connection c3 : direct) {
-                        // 2-stop check: c2 → c3
                         if (c3 != c1 && c3 != c2 &&
                                 c2.getArrivalCity().equals(c3.getDepartureCity()) &&
                                 isValidTime(c2, c3) &&
-                                !c3.getDaysOfOperation().isEmpty() && c3.timetable.getDepartureTime().isAfter(oneStop.timetable.getArrivalTime()) && layover(c2, c3)){
+                                isAcceptableLayover(c2, c3) &&
+                                !c3.getDaysOfOperation().isEmpty() && 
+                                c3.timetable.getDepartureTime().isAfter(oneStop.timetable.getArrivalTime())){
 
-                            // Create a 2-stop connection: c1 → c2 → c3
                             twoStopConnections.add(new Connection(oneStop, c3));
                         }
                     }
@@ -165,7 +171,7 @@ public class ConnectionCatalog {
         }
 
         connections.addAll(twoStopConnections);
-        System.out.println("Added " + twoStopConnections.size() + " 2-stop connections.");
+        System.out.println("Added " + twoStopConnections.size() + " 2-stop connections (with layover policy).");
     }
 
 

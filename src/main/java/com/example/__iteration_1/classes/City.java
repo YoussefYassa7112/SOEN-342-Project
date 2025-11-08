@@ -1,11 +1,22 @@
 package com.example.__iteration_1.classes;
 
+import jakarta.persistence.*;
+
+
+@Entity
+@Table(name = "city")
 public class City {
 
+    @Id
+    @Column(name = "city_name")
     private String name;
 
     public City(String name) {
         this.name = name;
+    }
+
+    public City() {
+
     }
 
     public String getName() {
