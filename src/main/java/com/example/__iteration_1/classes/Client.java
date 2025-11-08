@@ -1,45 +1,31 @@
 package com.example.__iteration_1.classes;
 
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
 
+@Entity
 public class Client {
-    private String firstName;
-    private String lastName;
-    private int age;
+    @Id
+    @Column(name = "client_id")
     private String id;
-    private List<Trip> trips;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+    @Column(name = "age")
+    private int age;
 
     public Client(String firstName, String lastName, int age, String id) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
         this.id = id;
-        this.trips = new ArrayList<>();
     }
 
-    public void addTrip(Trip trip) {
-        this.trips.add(trip);
-    }
+    public Client() {
 
-    public List<Trip> getCurrentTrips() {
-        List<Trip> current = new ArrayList<>();
-        for (Trip trip : trips) {
-            if (trip.isCurrent()) {
-                current.add(trip);
-            }
-        }
-        return current;
-    }
-
-    public List<Trip> getPastTrips() {
-        List<Trip> past = new ArrayList<>();
-        for (Trip trip : trips) {
-            if (!trip.isCurrent()) {
-                past.add(trip);
-            }
-        }
-        return past;
     }
 
     public String getFirstName() {
@@ -56,10 +42,6 @@ public class Client {
 
     public String getId() {
         return id;
-    }
-
-    public List<Trip> getTrips() {
-        return trips;
     }
 
     @Override

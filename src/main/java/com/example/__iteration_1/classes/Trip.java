@@ -1,26 +1,39 @@
 package com.example.__iteration_1.classes;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
+@Entity
 public class Trip {
-    private String tripId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "trip_id")
+    private Long tripId;
+
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Reservation> reservations;
+
+    @Column(name = "booking_date")
     private LocalDate bookingDate;
+
+    @Column(name = "connection_route_id")
+    private String connectionRouteId;
+
+    @Transient
     private Connection connection;
 
     public Trip(Connection connection) {
-        this.tripId = generateTripId();
         this.reservations = new ArrayList<>();
         this.bookingDate = LocalDate.now();
         this.connection = connection;
+        this.connectionRouteId = connection.getRouteId();
     }
 
-    private String generateTripId() {
-        String uuid = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-        return "TRP-" + uuid.substring(0, 4) + "-" + uuid.substring(4, 8);
+    public Trip() {
+
     }
 
     public void addReservation(Reservation reservation) {
@@ -33,13 +46,14 @@ public class Trip {
             }
         }
         reservations.add(reservation);
+        reservation.setTrip(this);
     }
 
     public boolean isCurrent() {
         return bookingDate.equals(LocalDate.now()) || bookingDate.isAfter(LocalDate.now());
     }
 
-    public String getTripId() {
+    public Long getTripId() {
         return tripId;
     }
 
@@ -53,6 +67,14 @@ public class Trip {
 
     public Connection getConnection() {
         return connection;
+    }
+
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
+
+    public String getConnectionRouteId() {
+        return connectionRouteId;
     }
 
     public double getTotalPrice() {

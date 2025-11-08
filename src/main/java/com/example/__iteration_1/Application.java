@@ -1,13 +1,19 @@
 package com.example.__iteration_1;
 
 import com.example.__iteration_1.classes.Console;
+import com.example.__iteration_1.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 import java.util.Scanner;
 
 @SpringBootApplication
 public class Application implements CommandLineRunner {
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(Application.class);
@@ -17,7 +23,12 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        Console c = new Console();
+        TripRepository tripRepository = applicationContext.getBean(TripRepository.class);
+        ClientRepository clientRepository = applicationContext.getBean(ClientRepository.class);
+        ReservationRepository reservationRepository = applicationContext.getBean(ReservationRepository.class);
+        TicketRepository ticketRepository = applicationContext.getBean(TicketRepository.class);
+
+        Console c = new Console(tripRepository, clientRepository, reservationRepository, ticketRepository);
         c.readFile();
         c.oneStop();
         c.twoStops();

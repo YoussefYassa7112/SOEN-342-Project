@@ -1,16 +1,28 @@
 package com.example.__iteration_1.classes;
 
+import jakarta.persistence.*;
+
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "ticket_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class Ticket {
-    private static int ticketCounter = 10000;
-    private int ticketId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ticket_id")
+    private Long ticketId;
+
+    @Column(name = "price")
     private double price;
 
     public Ticket(double price) {
-        this.ticketId = ++ticketCounter;
         this.price = price;
     }
 
-    public int getTicketId() {
+    public Ticket() {
+
+    }
+
+    public Long getTicketId() {
         return ticketId;
     }
 

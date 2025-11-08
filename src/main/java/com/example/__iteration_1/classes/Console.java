@@ -1,6 +1,7 @@
 package com.example.__iteration_1.classes;
 
 import com.example.__iteration_1.enums.DaysOfOperation;
+import com.example.__iteration_1.repository.*;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -11,11 +12,18 @@ public class Console {
     private final String csv = "src/main/resources/eu_rail_network.csv";
     private List<Connection> resultsList = new ArrayList<>();
     private ConnectionCatalog catalog;
-    private BookingSystem bookingSystem;
+    private TripRepository tripRepository;
+    private ClientRepository clientRepository;
+    private ReservationRepository reservationRepository;
+    private TicketRepository ticketRepository;
 
-    public Console() {
+    public Console(TripRepository tripRepository, ClientRepository clientRepository, 
+                   ReservationRepository reservationRepository, TicketRepository ticketRepository) {
         this.catalog = new ConnectionCatalog();
-        this.bookingSystem = new BookingSystem();
+        this.tripRepository = tripRepository;
+        this.clientRepository = clientRepository;
+        this.reservationRepository = reservationRepository;
+        this.ticketRepository = ticketRepository;
     }
 
     public void readFile() {
@@ -152,7 +160,34 @@ public class Console {
         }
 
         try {
-            Trip trip = bookingSystem.bookTrip(travelers, selectedConnection, classPreferences);
+            Trip trip = new Trip(selectedConnection);
+
+            for (int i = 0; i < travelers.size(); i++) {
+                Client client = travelers.get(i);
+
+                Optional<Client> existingClient = clientRepository.findById(client.getId());
+                if (existingClient.isPresent()) {
+                    client = existingClient.get();
+                } else {
+                    client = clientRepository.save(client);
+                }
+
+                Reservation reservation = new Reservation(client, selectedConnection, classPreferences[i]);
+
+                for (Reservation r : trip.getReservations()) {
+                    if (r.getClient().equals(client)) {
+                        throw new IllegalArgumentException(
+                                "Client " + client.getLastName() +
+                                        " already has a reservation for this connection"
+                        );
+                    }
+                }
+                
+                trip.addReservation(reservation);
+            }
+
+            trip = tripRepository.save(trip);
+            
             System.out.println("\n✓ Trip booked successfully!");
             System.out.println(trip);
             return trip;
@@ -168,14 +203,56 @@ public class Console {
         System.out.print("Enter your ID: ");
         String id = scanner.nextLine().trim();
 
-        Map<String, List<Trip>> trips = bookingSystem.viewTrips(lastName, id);
-
-        List<Trip> currentTrips = trips.get("current");
-        List<Trip> pastTrips = trips.get("past");
-
-        if (currentTrips.isEmpty() && pastTrips.isEmpty()) {
+        Optional<Client> clientOpt = clientRepository.findById(id);
+        if (clientOpt.isEmpty() || !clientOpt.get().getLastName().equalsIgnoreCase(lastName)) {
             System.out.println("No trips found for " + lastName + " with ID " + id);
             return;
+        }
+
+        Client client = clientOpt.get();
+
+        List<Reservation> reservations = reservationRepository.findAll().stream()
+                .filter(r -> r.getClient().getId().equals(client.getId()))
+                .toList();
+
+        if (reservations.isEmpty()) {
+            System.out.println("No trips found for " + lastName + " with ID " + id);
+            return;
+        }
+
+        Set<Long> tripIds = new HashSet<>();
+        for (Reservation r : reservations) {
+            if (r.getTrip() != null) {
+                tripIds.add(r.getTrip().getTripId());
+            }
+        }
+
+        List<Trip> allTrips = tripRepository.findAllById(tripIds);
+
+        for (Trip trip : allTrips) {
+            Connection connection = findConnectionByRouteId(trip.getConnectionRouteId());
+            if (connection != null) {
+                trip.setConnection(connection);
+            }
+            
+            // Also reconstruct connections for each reservation
+            for (Reservation reservation : trip.getReservations()) {
+                Connection resConnection = findConnectionByRouteId(reservation.getConnectionRouteId());
+                if (resConnection != null) {
+                    reservation.setConnection(resConnection);
+                }
+            }
+        }
+
+        List<Trip> currentTrips = new ArrayList<>();
+        List<Trip> pastTrips = new ArrayList<>();
+
+        for (Trip trip : allTrips) {
+            if (trip.isCurrent()) {
+                currentTrips.add(trip);
+            } else {
+                pastTrips.add(trip);
+            }
         }
 
         System.out.println("\n========== CURRENT/UPCOMING TRIPS ==========");
@@ -197,16 +274,24 @@ public class Console {
         }
     }
 
+    private Connection findConnectionByRouteId(String routeId) {
+        if (routeId == null) return null;
+        
+        List<Connection> allConnections = catalog.getAllConnections();
+        for (Connection conn : allConnections) {
+            if (conn.getRouteId().equals(routeId)) {
+                return conn;
+            }
+        }
+        return null;
+    }
+
     public List<Connection> getResultsList() {
         return resultsList;
     }
 
     public ConnectionCatalog getCatalog() {
         return catalog;
-    }
-
-    public BookingSystem getBookingSystem() {
-        return bookingSystem;
     }
 
     public void showResults() {
