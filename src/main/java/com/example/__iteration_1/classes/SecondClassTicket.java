@@ -7,12 +7,8 @@ import jakarta.persistence.Entity;
 @DiscriminatorValue("SECOND_CLASS_TICKET")
 public class SecondClassTicket extends Ticket {
 
-
-    private double price;
-
     public SecondClassTicket(double price) {
         super(price);
-        this.price = price;
     }
 
     public SecondClassTicket() {
@@ -20,20 +16,10 @@ public class SecondClassTicket extends Ticket {
     }
 
     @Override
-    public double getPrice() {
-        return price;
-    }
-
-    @Override
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    @Override
     public String toString() {
         return "SecondClassTicket{" +
                 "ticketId=" + getTicketId() +
-                ", price in euro=" + price +
+                ", price in euro=" + getPrice() +
                 '}';
     }
 }
