@@ -101,9 +101,13 @@ public class Console {
             System.out.println("No connections available. Please search for connections first.");
             return null;
         }
-
         printResults();
+        Connection selectedConnection = chooseTrip();
+        return resrveTripForUsers(selectedConnection);
+    }
 
+    public Connection chooseTrip() {
+        Scanner scanner = new Scanner(System.in);
         System.out.print("\nEnter the index of the connection you want to book: ");
         int connectionIndex;
         try {
@@ -116,9 +120,11 @@ public class Console {
             System.out.println("Invalid input.");
             return null;
         }
+        return resultsList.get(connectionIndex);
+    }
 
-        Connection selectedConnection = resultsList.get(connectionIndex);
-
+    public Trip resrveTripForUsers(Connection selectedConnection){
+        Scanner scanner = new Scanner(System.in);
         System.out.print("How many people are traveling? ");
         int numTravelers;
         try {
@@ -158,7 +164,6 @@ public class Console {
             travelers.add(client);
             classPreferences[i] = classChoice.equals("yes") || classChoice.equals("y");
         }
-
         try {
             Trip trip = new Trip(selectedConnection);
 
@@ -182,12 +187,12 @@ public class Console {
                         );
                     }
                 }
-                
+
                 trip.addReservation(reservation);
             }
 
             trip = tripRepository.save(trip);
-            
+
             System.out.println("\n✓ Trip booked successfully!");
             System.out.println(trip);
             return trip;
