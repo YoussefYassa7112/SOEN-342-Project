@@ -104,7 +104,7 @@ public class Application implements CommandLineRunner {
                     break;
 
                 case "7":
-                    c.viewTrips(scanner);
+                    c.viewTrips();
                     break;
 
                 case "8":

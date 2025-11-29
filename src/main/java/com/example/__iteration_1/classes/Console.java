@@ -199,7 +199,7 @@ public class Console {
             System.out.println("Booking failed: " + e.getMessage());
         }
     }
-    public void viewTrips(Scanner scanner) {
+    public void viewTrips() {
         Client client = enterUserCredentials();
         retrieveTrips(client);
     }
