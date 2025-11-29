@@ -1,28 +1,12 @@
 context Reservation
 inv: self.client <> null
-
-context Reservation
 inv: self.connectionRouteId <> null and self.connectionRouteId.size() > 0
-
-context Reservation
 inv: self.ticket <> null
-
-context Reservation
 inv: self.isFirstClass = true implies self.ticket.oclIsTypeOf(FirstClassTicket)
-
-context Reservation
 inv: self.isFirstClass = false implies self.ticket.oclIsTypeOf(SecondClassTicket)
-
-context Reservation
 inv: self.reservationId <> null and Reservation.allInstances()->forAll(r | r <> self implies r.reservationId <> self.reservationId)
-
-context Reservation
 inv: self.trip <> null implies self.trip.reservations->includes(self)
-
-context Reservation
 inv: self.connection <> null implies self.connectionRouteId = self.connection.getRouteId()
-
-context Reservation
 inv positiveTicketPrice: self.ticket.getPrice() > 0
 
 
@@ -38,28 +22,9 @@ post: self.isFirstClass = isFirstClass
 post: self.ticket <> null
 post: (isFirstClass = true implies self.ticket.oclIsTypeOf(FirstClassTicket)) and
       (isFirstClass = false implies self.ticket.oclIsTypeOf(SecondClassTicket))
-
-context Reservation::getClient(): Client
-post: result = self.client
-
-context Reservation::getConnection(): Connection
-post: result = self.connection
-
-context Reservation::getConnectionRouteId(): String
-post: result = self.connectionRouteId
-
-context Reservation::getTicket(): Ticket
-post: result = self.ticket
+post: (isFirstClass implies self.ticket.price = connection.firstClassTicket.price) and
+      (not isFirstClass implies self.ticket.price = connection.secondClassTicket.price)
 
 context Reservation::isFirstClass(): boolean
 post: result = self.isFirstClass
 
-context Reservation::getTrip(): Trip
-post: result = self.trip
-
-context Reservation::setConnection(connection: Connection)
-pre: connection <> null
-post: self.connection = connection
-
-context Reservation::setTrip(trip: Trip)
-post: self.trip = trip

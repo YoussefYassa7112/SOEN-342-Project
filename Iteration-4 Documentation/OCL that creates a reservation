@@ -1,0 +1,14 @@
+context Reservation::Reservation(client: Client, connection: Connection, isFirstClass: boolean)
+      pre: client <> null
+      pre: connection <> null
+      pre: (isFirstClass = true implies connection.getFirstClassTicket() <> null) and
+           (isFirstClass = false implies connection.getSecondClassTicket() <> null)
+      post: self.client = client
+      post: self.connection = connection
+      post: self.connectionRouteId = connection.getRouteId()
+      post: self.isFirstClass = isFirstClass
+      post: self.ticket <> null
+      post: (isFirstClass = true implies self.ticket.oclIsTypeOf(FirstClassTicket)) and
+            (isFirstClass = false implies self.ticket.oclIsTypeOf(SecondClassTicket)) and
+      post: (isFirstClass implies self.ticket.price = connection.firstClassTicket.price)
+            (not isFirstClass implies self.ticket.price = connection.secondClassTicket.price)
