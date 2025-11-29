@@ -100,7 +100,7 @@ public class Application implements CommandLineRunner {
                     break;
 
                 case "6":
-                    c.bookTrip(scanner);
+                    c.bookTrip();
                     break;
 
                 case "7":

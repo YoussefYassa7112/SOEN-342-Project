@@ -96,14 +96,18 @@ public class Console {
         resultsList = catalog.resetFilters();
     }
 
-    public Trip bookTrip(Scanner scanner) {
+    public void bookTrip() {
         if (resultsList.isEmpty()) {
             System.out.println("No connections available. Please search for connections first.");
-            return null;
+            return;
         }
-
         printResults();
+        Connection selectedConnection = chooseTrip();
+        resrveTripForUsers(selectedConnection);
+    }
 
+    public Connection chooseTrip() {
+        Scanner scanner = new Scanner(System.in);
         System.out.print("\nEnter the index of the connection you want to book: ");
         int connectionIndex;
         try {
@@ -116,20 +120,22 @@ public class Console {
             System.out.println("Invalid input.");
             return null;
         }
+        return resultsList.get(connectionIndex);
+    }
 
-        Connection selectedConnection = resultsList.get(connectionIndex);
-
+    public void resrveTripForUsers(Connection selectedConnection){
+        Scanner scanner = new Scanner(System.in);
         System.out.print("How many people are traveling? ");
         int numTravelers;
         try {
             numTravelers = Integer.parseInt(scanner.nextLine());
             if (numTravelers <= 0) {
                 System.out.println("Number of travelers must be at least 1.");
-                return null;
+                return;
             }
         } catch (NumberFormatException e) {
             System.out.println("Invalid input.");
-            return null;
+            return;
         }
 
         List<Client> travelers = new ArrayList<>();
@@ -158,7 +164,6 @@ public class Console {
             travelers.add(client);
             classPreferences[i] = classChoice.equals("yes") || classChoice.equals("y");
         }
-
         try {
             Trip trip = new Trip(selectedConnection);
 
@@ -182,22 +187,26 @@ public class Console {
                         );
                     }
                 }
-                
+
                 trip.addReservation(reservation);
             }
 
             trip = tripRepository.save(trip);
-            
+
             System.out.println("\n✓ Trip booked successfully!");
             System.out.println(trip);
-            return trip;
         } catch (IllegalArgumentException e) {
             System.out.println("Booking failed: " + e.getMessage());
-            return null;
         }
     }
-
     public void viewTrips(Scanner scanner) {
+        Client client = enterUserCredentials();
+        retrieveTrips(client);
+    }
+
+
+    public Client enterUserCredentials(){
+        Scanner scanner = new Scanner(System.in);
         System.out.print("Enter your Last Name: ");
         String lastName = scanner.nextLine().trim();
         System.out.print("Enter your ID: ");
@@ -206,17 +215,19 @@ public class Console {
         Optional<Client> clientOpt = clientRepository.findById(id);
         if (clientOpt.isEmpty() || !clientOpt.get().getLastName().equalsIgnoreCase(lastName)) {
             System.out.println("No trips found for " + lastName + " with ID " + id);
-            return;
+            return null;
         }
 
-        Client client = clientOpt.get();
+        return clientOpt.get();
+    }
 
+    public void retrieveTrips(Client client) {
         List<Reservation> reservations = reservationRepository.findAll().stream()
                 .filter(r -> r.getClient().getId().equals(client.getId()))
                 .toList();
 
         if (reservations.isEmpty()) {
-            System.out.println("No trips found for " + lastName + " with ID " + id);
+            System.out.println("No trips found for " + client.getLastName() + " with ID " + client.getId());
             return;
         }
 
@@ -234,7 +245,7 @@ public class Console {
             if (connection != null) {
                 trip.setConnection(connection);
             }
-            
+
             // Also reconstruct connections for each reservation
             for (Reservation reservation : trip.getReservations()) {
                 Connection resConnection = findConnectionByRouteId(reservation.getConnectionRouteId());

@@ -12,7 +12,7 @@ public abstract class Ticket {
     private Long ticketId;
 
     @Column(name = "price")
-    private double price;
+    protected double price;
 
     public Ticket(double price) {
         this.price = price;
@@ -26,9 +26,13 @@ public abstract class Ticket {
         return ticketId;
     }
 
-    public abstract double getPrice();
+    public double getPrice() {
+        return price;
+    }
 
-    public abstract void setPrice(double price);
+    public void setPrice(double price) {
+        this.price = price;
+    }
 
     @Override
     public String toString() {
