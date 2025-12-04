@@ -8,6 +8,10 @@
 | Tristan Girardi | 40272203 |
 | Youssef Youssef | 40285384 | 
 
+## 🎥 Project Demo
+
+[![Watch the Demo](https://img.shields.io/badge/YouTube-Demo-red?logo=youtube&logoColor=white&style=for-the-badge)](https://www.youtube.com/watch?v=98RXCTIDypw)
+
 ## How to run the program
 
 ### Prerequisites
