@@ -50,14 +50,53 @@ public class Console {
     }
 
     public void printResults() {
-        System.out.printf(
-                "| %-5s | %-30s | %-30s | %-30s | %-40s | %-40s | %-40s | %-40s |\n",
-                "Index", "Departure", "Arrival", "Timetable", "Train", "Days", "1st Class", "2nd Class"
-        );
-        System.out.println("---------------------------------------------------------------------------------------------------------------------------");
+        System.out.println();
+        System.out.println("┌───────┬──────────────────┬──────────────────┬───────────────┬──────────┬─────────────────────────────────────┬──────────────────────────┬────────────┬────────────┐");
+        System.out.println("│ Index │ From             │ To               │ Time          │ Duration │ Train                               │ Days                     │ 1st Class  │ 2nd Class  │");
+        System.out.println("├───────┼──────────────────┼──────────────────┼───────────────┼──────────┼─────────────────────────────────────┼──────────────────────────┼────────────┼────────────┤");
         for (int i = 0; i < resultsList.size(); i++) {
-            System.out.printf("| %-5d %s\n", i, resultsList.get(i));
+            Connection c = resultsList.get(i);
+            String days = formatDays(c.getDaysOfOperation());
+            String duration = formatDuration(c.getTimetable().getDuration());
+            System.out.printf("│ %5d │ %-16s │ %-16s │ %5s - %5s │ %8s │ %-35s │ %-24s │ €%9.2f │ €%9.2f │%n",
+                    i,
+                    truncate(c.getDepartureCity().getName(), 16),
+                    truncate(c.getArrivalCity().getName(), 16),
+                    c.getTimetable().getDepartureTime(),
+                    c.getTimetable().getArrivalTime(),
+                    duration,
+                    truncate(c.getTrain().getTrainType(), 35),
+                    truncate(days, 24),
+                    c.getFirstClassTicket().getPrice(),
+                    c.getSecondClassTicket().getPrice());
         }
+        System.out.println("└───────┴──────────────────┴──────────────────┴───────────────┴──────────┴─────────────────────────────────────┴──────────────────────────┴────────────┴────────────┘");
+        System.out.println("  Total: " + resultsList.size() + " connections");
+    }
+
+    private String formatDuration(Long minutes) {
+        if (minutes == null || minutes < 0) {
+            minutes = Math.abs(minutes != null ? minutes : 0);
+            if (minutes == 0) return "-";
+        }
+        long hours = minutes / 60;
+        long mins = minutes % 60;
+        return String.format("%dh %02dm", hours, mins);
+    }
+
+    private String formatDays(java.util.List<com.example.__iteration_1.enums.DaysOfOperation> days) {
+        if (days == null || days.isEmpty()) return "-";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < days.size(); i++) {
+            if (i > 0) sb.append(",");
+            sb.append(days.get(i).toString().substring(0, 3));
+        }
+        return sb.toString();
+    }
+
+    private String truncate(String str, int maxLength) {
+        if (str == null) return "";
+        return str.length() > maxLength ? str.substring(0, maxLength - 2) + ".." : str;
     }
 
     public void searchConnection() {
@@ -98,26 +137,28 @@ public class Console {
 
     public void bookTrip() {
         if (resultsList.isEmpty()) {
-            System.out.println("No connections available. Please search for connections first.");
+            System.out.println("\n  No connections available. Please search for connections first.");
             return;
         }
         printResults();
         Connection selectedConnection = chooseTrip();
-        resrveTripForUsers(selectedConnection);
+        if (selectedConnection != null) {
+            resrveTripForUsers(selectedConnection);
+        }
     }
 
     public Connection chooseTrip() {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("\nEnter the index of the connection you want to book: ");
+        System.out.print("\nEnter connection index to book: ");
         int connectionIndex;
         try {
             connectionIndex = Integer.parseInt(scanner.nextLine());
             if (connectionIndex < 0 || connectionIndex >= resultsList.size()) {
-                System.out.println("Invalid connection index.");
+                System.out.println("  Invalid connection index.");
                 return null;
             }
         } catch (NumberFormatException e) {
-            System.out.println("Invalid input.");
+            System.out.println("  Invalid input.");
             return null;
         }
         return resultsList.get(connectionIndex);
@@ -125,16 +166,16 @@ public class Console {
 
     public void resrveTripForUsers(Connection selectedConnection){
         Scanner scanner = new Scanner(System.in);
-        System.out.print("How many people are traveling? ");
+        System.out.print("Number of travelers: ");
         int numTravelers;
         try {
             numTravelers = Integer.parseInt(scanner.nextLine());
             if (numTravelers <= 0) {
-                System.out.println("Number of travelers must be at least 1.");
+                System.out.println("  Number of travelers must be at least 1.");
                 return;
             }
         } catch (NumberFormatException e) {
-            System.out.println("Invalid input.");
+            System.out.println("  Invalid input.");
             return;
         }
 
@@ -142,22 +183,24 @@ public class Console {
         boolean[] classPreferences = new boolean[numTravelers];
 
         for (int i = 0; i < numTravelers; i++) {
-            System.out.println("\n--- Traveler " + (i + 1) + " ---");
-            System.out.print("First Name: ");
+            System.out.println("\n┌─────────────────────────────────────┐");
+            System.out.println("│         TRAVELER " + (i + 1) + " DETAILS          │");
+            System.out.println("└─────────────────────────────────────┘");
+            System.out.print("  First Name     : ");
             String firstName = scanner.nextLine().trim();
-            System.out.print("Last Name: ");
+            System.out.print("  Last Name      : ");
             String lastName = scanner.nextLine().trim();
-            System.out.print("Age: ");
+            System.out.print("  Age            : ");
             int age;
             try {
                 age = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("Invalid age. Using default age 30.");
+                System.out.println("  Invalid age. Using default: 30");
                 age = 30;
             }
-            System.out.print("ID (Passport/State ID): ");
+            System.out.print("  ID (Passport)  : ");
             String id = scanner.nextLine().trim();
-            System.out.print("First Class? (yes/no): ");
+            System.out.print("  First Class?   : ");
             String classChoice = scanner.nextLine().trim().toLowerCase();
 
             Client client = new Client(firstName, lastName, age, id);
@@ -193,28 +236,34 @@ public class Console {
 
             trip = tripRepository.save(trip);
 
-            System.out.println("\n✓ Trip booked successfully!");
+            System.out.println("\n  ╔════════════════════════════════════════════════════════╗");
+            System.out.println("  ║                  BOOKING CONFIRMED                     ║");
+            System.out.println("  ╚════════════════════════════════════════════════════════╝");
             System.out.println(trip);
         } catch (IllegalArgumentException e) {
-            System.out.println("Booking failed: " + e.getMessage());
+            System.out.println("\n  Booking failed: " + e.getMessage());
         }
     }
     public void viewTrips() {
         Client client = enterUserCredentials();
-        retrieveTrips(client);
+        if (client != null) {
+            retrieveTrips(client);
+        }
     }
-
 
     public Client enterUserCredentials(){
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter your Last Name: ");
+        System.out.println("\n┌─────────────────────────────────────┐");
+        System.out.println("│         CLIENT VERIFICATION         │");
+        System.out.println("└─────────────────────────────────────┘");
+        System.out.print("  Last Name : ");
         String lastName = scanner.nextLine().trim();
-        System.out.print("Enter your ID: ");
+        System.out.print("  ID        : ");
         String id = scanner.nextLine().trim();
 
         Optional<Client> clientOpt = clientRepository.findById(id);
         if (clientOpt.isEmpty() || !clientOpt.get().getLastName().equalsIgnoreCase(lastName)) {
-            System.out.println("No trips found for " + lastName + " with ID " + id);
+            System.out.println("\n  No trips found for " + lastName + " with ID " + id);
             return null;
         }
 
@@ -227,7 +276,7 @@ public class Console {
                 .toList();
 
         if (reservations.isEmpty()) {
-            System.out.println("No trips found for " + client.getLastName() + " with ID " + client.getId());
+            System.out.println("\n  No trips found for " + client.getLastName() + " with ID " + client.getId());
             return;
         }
 
@@ -246,7 +295,6 @@ public class Console {
                 trip.setConnection(connection);
             }
 
-            // Also reconstruct connections for each reservation
             for (Reservation reservation : trip.getReservations()) {
                 Connection resConnection = findConnectionByRouteId(reservation.getConnectionRouteId());
                 if (resConnection != null) {
@@ -266,18 +314,22 @@ public class Console {
             }
         }
 
-        System.out.println("\n========== CURRENT/UPCOMING TRIPS ==========");
+        System.out.println("\n  ╔════════════════════════════════════════════════════════╗");
+        System.out.println("  ║              CURRENT / UPCOMING TRIPS                  ║");
+        System.out.println("  ╚════════════════════════════════════════════════════════╝");
         if (currentTrips.isEmpty()) {
-            System.out.println("No current or upcoming trips.");
+            System.out.println("  No current or upcoming trips.");
         } else {
             for (Trip trip : currentTrips) {
                 System.out.println(trip);
             }
         }
 
-        System.out.println("\n========== PAST TRIPS (HISTORY) ==========");
+        System.out.println("\n  ╔════════════════════════════════════════════════════════╗");
+        System.out.println("  ║                 PAST TRIPS (HISTORY)                   ║");
+        System.out.println("  ╚════════════════════════════════════════════════════════╝");
         if (pastTrips.isEmpty()) {
-            System.out.println("No past trips.");
+            System.out.println("  No past trips.");
         } else {
             for (Trip trip : pastTrips) {
                 System.out.println(trip);
@@ -306,8 +358,6 @@ public class Console {
     }
 
     public void showResults() {
-        for (Connection connection : resultsList) {
-            System.out.println(connection);
-        }
+        printResults();
     }
 }

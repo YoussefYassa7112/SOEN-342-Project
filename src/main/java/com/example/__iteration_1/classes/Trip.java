@@ -88,24 +88,27 @@ public class Trip {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\n=== Trip ID: ").append(tripId).append(" ===\n");
-        sb.append("Booking Date: ").append(bookingDate).append("\n");
-        sb.append("Connection: ").append(connection.getDepartureCity())
-                .append(" -> ").append(connection.getArrivalCity()).append("\n");
-        sb.append("Departure: ").append(connection.getTimetable().getDepartureTime())
-                .append(" | Arrival: ").append(connection.getTimetable().getArrivalTime()).append("\n");
-        sb.append("Number of Travelers: ").append(reservations.size()).append("\n");
-        sb.append("Reservations:\n");
+        sb.append("\n");
+        sb.append("  ┌────────────────────────────────────────────────────────┐\n");
+        sb.append("  │ TRIP #").append(String.format("%-49d", tripId)).append("│\n");
+        sb.append("  ├────────────────────────────────────────────────────────┤\n");
+        sb.append("  │ Route     : ").append(String.format("%-43s", connection.getDepartureCity() + " → " + connection.getArrivalCity())).append("│\n");
+        sb.append("  │ Schedule  : ").append(String.format("%-43s", connection.getTimetable().getDepartureTime() + " - " + connection.getTimetable().getArrivalTime())).append("│\n");
+        sb.append("  │ Booked On : ").append(String.format("%-43s", bookingDate)).append("│\n");
+        sb.append("  │ Travelers : ").append(String.format("%-43d", reservations.size())).append("│\n");
+        sb.append("  ├────────────────────────────────────────────────────────┤\n");
+        sb.append("  │ PASSENGERS                                             │\n");
+        sb.append("  ├────────────────────────────────────────────────────────┤\n");
         for (Reservation r : reservations) {
-            sb.append("  - ").append(r.getClient().getFirstName())
-                    .append(" ").append(r.getClient().getLastName())
-                    .append(" (Age: ").append(r.getClient().getAge()).append(")")
-                    .append(" | Ticket #").append(r.getTicket().getTicketId())
-                    .append(" | ").append(r.isFirstClass() ? "First" : "Second")
-                    .append(" Class | €").append(String.format("%.2f", r.getTicket().getPrice()))
-                    .append("\n");
+            String passengerInfo = r.getClient().getFirstName() + " " + r.getClient().getLastName() + 
+                    " (Age " + r.getClient().getAge() + ")";
+            String ticketInfo = (r.isFirstClass() ? "1st" : "2nd") + " Class - €" + 
+                    String.format("%.2f", r.getTicket().getPrice());
+            sb.append("  │ ").append(String.format("%-30s", passengerInfo)).append(String.format("%-25s", ticketInfo)).append("│\n");
         }
-        sb.append("Total Price: €").append(String.format("%.2f", getTotalPrice())).append("\n");
+        sb.append("  ├────────────────────────────────────────────────────────┤\n");
+        sb.append("  │ TOTAL: €").append(String.format("%-47.2f", getTotalPrice())).append("│\n");
+        sb.append("  └────────────────────────────────────────────────────────┘");
         return sb.toString();
     }
 }

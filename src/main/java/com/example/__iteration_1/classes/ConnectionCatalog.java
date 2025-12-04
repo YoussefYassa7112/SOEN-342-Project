@@ -265,15 +265,21 @@ public class ConnectionCatalog {
     }
 
     public List<Connection> sortResultsByTripDuration() {
-        System.out.println("Would you like to sort by trip duration in ascending or descending order? (Enter 'asc' or 'desc'): ");
+        System.out.print("Sort by duration - ascending or descending? (asc/desc): ");
         Scanner scanner = new Scanner(System.in);
         String order = scanner.nextLine().trim().toLowerCase();
         if (!order.equals("asc") && !order.equals("desc")) {
-            System.out.println("Invalid input. Default to ascending order.");
+            System.out.println("  Invalid input. Defaulting to ascending.");
             order = "asc";
         }
         Comparator<Connection> comparator = Comparator.comparingLong(
-                c -> c.getTimetable().getDuration()
+                c -> {
+                    Long duration = c.getTimetable().getDuration();
+                    if (duration == null || duration < 0) {
+                        return Math.abs(duration != null ? duration : 0L);
+                    }
+                    return duration;
+                }
         );
         if ("desc".equalsIgnoreCase(order)) {
             comparator = comparator.reversed();
